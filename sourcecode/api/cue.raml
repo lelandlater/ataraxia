@@ -1,0 +1,65 @@
+#%RAML 1.0
+---
+title: Cue API
+description: # Cue API ## Build shared playlists
+version: v0
+baseUri: https://api.cue.zone/{version}
+protocols: [ HTTPS ]
+documentaion: https://api.cue.zone/docs
+mediaType: application/json
+securitySchemes:
+  oauth_2_0: !include securitySchemes/oauth_2_0.raml
+resourceTypes:
+  collection: !include resourceTypes/collection.raml
+    get:
+      responses:
+        200:
+          body:
+            type: <<resourcePathName>>
+    post:
+      responses:
+        200:
+          body:
+            type: <<resourcePathName | !singularize>>
+  member:     !include resourceTypes/member.raml
+    get:
+      responses:
+        200:
+          body:
+            type: <<resourcePathName>>
+traits:
+  secured:    !include traits/secured.raml
+  paged:      !include traits/paged.raml
+types:
+  Event:  !include types/event.raml
+  Events: !include types/events.raml
+  User:   !include types/user.raml
+  Cue:    !include types/cue.raml
+
+/events:
+  type: collection
+  /{evid}:
+    get:
+      description:
+      responses:
+        200:
+          body:
+            application/json:
+    post:
+      description:
+      responses:
+        200:
+          body:
+            application/json:
+
+/users:
+  /{uid}:
+    get:
+    post:
+
+/cues:
+  /{cueid}:
+    get:
+    post:
+    put:
+    delete:

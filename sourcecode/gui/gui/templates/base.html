@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>{{ title }}</title>
+
+        <!-- links to CSS; CSS reset -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='layout.css') }}"/>
+        {% block links %}{% endblock %}
+
+        <!-- Google Fonts -->
+        <style>@import url('https://fonts.googleapis.com/css?family=Lato:100,700');
+        </style>
+    </head>
+
+    <body>
+        <section id="top-container">{% block top %}{% endblock %}</section>
+        <section id="logo-container">{% block logo %}{% endblock %}</section>
+        <section id="mid-container">{% block mid %}{% endblock %}</section>
+        <section id="body-container">{% block body %}{% endblock %}</section>
+        <section id="bottom-container">{% block bottom %}{% endblock %}</section>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>

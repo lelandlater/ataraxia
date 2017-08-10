@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# bring up the cloudformation network stack
+
+
+# launch vagrant box on which to run docker-compose
+
+
+# pass credentials with Ansible and start the services 

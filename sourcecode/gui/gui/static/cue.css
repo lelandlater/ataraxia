@@ -1,0 +1,33 @@
+.cue-logo {
+	font-family: 'Lato';
+	font-weight: 100;
+	color: #5555ff;
+}
+
+.cue-text {
+	font-family: 'Lato';
+	font-weight: 700;
+  color: #5555ff;
+}
+
+.cue-gradient0 {
+  background: red; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(left top, #a8e5b7, #ffb6b6); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(bottom right, #a8e5b7, #ffb6b6); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(bottom right, #a8e5b7, #ffb6b6); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to bottom right, #a8e5b7, #ffb6b6); /* Standard syntax */
+  width: 100%;
+}
+
+.cue-gradient1 {
+
+}
+
+.cue-button {
+  display: inline-block;
+  text-decoration: none;
+  -webkit-transition: all .35s ease 0s;
+  -moz-transition: all .35s ease 0s;
+  -o-transition: all .35s ease 0s;
+  transition: all .35s ease 0s;
+}

@@ -1,0 +1,15 @@
+# Cue API
+
+*launch events and share music with your friends in a simple Python web UI 
+*provides backend for iOS UI and Android, web
+*collects logs and data re: user activity
+*beta testing July 2017 - October 2017
+
+## Architecture overview
+
+The Cue API is an authentication-protected interface between the underlying mechanisms supporting multi-user live play queues and the mobile apps 
+
+## TODO
+
+
+
