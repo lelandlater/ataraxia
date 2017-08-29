@@ -1,0 +1,22 @@
+require 'vagrant-aws'
+
+Vagrant.configure('2') do |config|
+
+  config.vm.box = 'aws-dummy'
+
+  config.vm.provider 'aws' do |aws,override|
+    aws.access_key_id = {{ access_key }}
+    aws.secret_access_key = {{ secret_key }}
+
+    aws.keypair_name = 'key0-cue-api'
+
+    aws.region = {{ region }}
+    aws.ami = {{ ubuntu_image }} # ubuntu 16.04 LTS ; hvm:ebs-ssd ; us-east-1
+    aws.security_groups = [{{ sg }}]
+
+    aws.user_data = File.read("user_data.txt")
+
+    override.ssh.username = 'ubuntu'
+    override.ssh.private_key_path = '~/cue-api/run/.keys/key0-cue-api.pem'
+  end
+end

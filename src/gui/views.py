@@ -3,7 +3,7 @@ from htmlmin.minify import html_minify
 from util import NavBar, NavItem
 
 def index():
-    nav = NavBar(start=[NavItem('http://api.cue.zone', 'API')])
+    nav = NavBar(start=[NavItem('0.0.0.0:10101', 'API')])
     footer = NavBar(middle=[NavItem(url_for('contact'), 'CONTACT')])
     buttons = []
     rendered_html = render_template('index.html', nav=nav, buttons=buttons, footer=footer, title='Cue: social playlist')

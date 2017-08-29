@@ -1,19 +1,21 @@
+import jwt
+from flask import make_response
 from flask_restful import Resource
-from logic import CueAPIRequestError, _add_track_to_cue, _get_user_by_uid, _get_user_by_suri, _get_cue_by_cid, _get_event
-from schemas import UserSchema, EventSchema, CueSchema, TrackSchema
-from werkzeug.datastructures import Headers, CallbackDict
-from run import log
+from . import CueAPIRequestError, _add_track_to_cue, _get_user_by_uid, \
+                  _get_user_by_suri, _get_cue_by_cid, _get_event_by_evid, \
+                  UserSchema, EventSchema, CueSchema, TrackSchema
+#from run import log
 import sys
 
 class User(Resource):
     def get(self, suri):
         try:
-            resp=_get_user_by_suri(suri)
+            resp=make_response(_get_user_by_suri(suri))
         except CueAPIRequestError as e:
-            resp=
-        d=Headers()
-        d.add('Content-Type', 'text/json')
-        d.add('Content-Length', sys.getsizeof(resp))
+            resp=make_reponse(e)
+        resp.headers.add['Content-Type']='text/json'
+        resp.headers.add['Content-Length']=sys.getsizeof(resp))
+        return resp
 
     def get(self, uid):
         # marshmallow data to User schema
@@ -32,7 +34,9 @@ class Event(Resource):
     def get(self, evid):
         return True
 
-    def post(self, evid, cid, tid )
+    def post(self, evid, cid, tid):
+        return True
+
     def put(self, evid, cid):
         # change the cue for a given event 
         return True
@@ -64,8 +68,8 @@ class Cue(Resource):
         return 0
 
 class Track(Resource):
-    def get(self, tid):
-        ()
+    def nothing():
+        pass
         
         
         
