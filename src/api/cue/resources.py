@@ -22,6 +22,8 @@ class User(Resource):
         _get_user_by_uid(uid)
         return True
 
+    def put(self, uid):
+
     def post(self, suri):
         try:
             _create_new_user(suri)

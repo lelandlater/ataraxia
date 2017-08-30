@@ -2,7 +2,7 @@ import arrow
 import base64, M2Crypto
 import json
 import random
-#from run import session
+
 from models import User, Event, Cue, Track
 from cassandra import ConsistencyLevel
 """
@@ -37,15 +37,15 @@ class CueAPIResourceCreationError(Error):
 def generate_id(num_bytes=16):
     return base64.b64encode(m2Crypto.m2.rand_bytes(num_bytes))
 
-def _create_user(suri):
+def _create_user(suri) -> int:
     # check if user with same Spotify URI exists
-    s_user=session.execute('SELECT * FROM users_by_suri WHERE suri={}'.format(suri))
+    s_user=session.execute(prepared['get_user_by_suri'].format(suri))
     if s_user is not None:
         raise CueAPIResourceCreationError
     if s_user is None:
         uid=generate_id()
-        unq=session.execute('SELECT * FROM users WHERE uid={}'.format(uid))
-        while unq != None:
+        chk_unique=session.execute('SELECT * FROM users WHERE uid={}'.format(uid))
+        while chk_unique != None:
             uid=generate_id()
             unq=session.execute('SELECT * FROM users WHERE uid={}'.format(uid))
         session.execute('INSERT INTO ')
@@ -63,15 +63,12 @@ def _create_event(name):
 # - get_user_by_suri()
 # - get_next_track()
 
-def _get_user_by_uid(uid):
-    # check uid within known bounds
-    session.execute('KEYSPACE user')
+def _get_all_users():
+    users=session.execute("SELECT * FROM users")
+    return users
+    
+def _get_user(uid):
     session.execute('')
-
-def _get_user_by_suri(suri):
-    query=SimpleStatement('SELECT * from users where suri=%s', consistencyconsistency_level=ConsistencyLevel.ONE)
-    raise CueAPIRequestError('Failed to get user by suri.', 14)
-
 
 def _get_event_by_evid(evid):
     session.execute('')
@@ -85,5 +82,5 @@ def _check_suri_format(inp):
     """
     return 0
 
-def _add_user_to_event(uid, evid):
-
+def _add_user_to_event(uid, suri, evid):
+        session.execute("UPDATE v0.events SET attendees = attendees + [({}, {})] WHERE evid={}".format(uid, suri, evid)

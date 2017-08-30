@@ -18,8 +18,8 @@ cluster = Cluster(['cassandra']) # see docker-compose link
 session = cluster.connect()
 
 from cue.models import _setup_db
-session=_setup_db(session)
-
+session,prepared_stmts=_setup_db(session) # potential bug: just set up in this file?
+session.execute('USE v0')
 # create API
 api.add_resource(User, '/user/<int:uid>', '/user/<int:suri>')
 api.add_resource(Event, '/event/<int:evid>')

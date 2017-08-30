@@ -1,92 +1,72 @@
 import abc
 import arrow
+import collections
+from typing import Tuple, List
 from cue import _check_suri_format, CueAPIResourceCreationError
 from marshmallow import Schema, fields
 
-def _setup_db(sesh):
-    # check if db configured already
-    sesh.row_factory=ordered_dict_factory
-    # create keyspace 
-    sesh.execute(
-        '''
-        CREATE KEYSPACE IF NOT EXISTS v0
-        WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3 }'
-    ''')
-    sesh.execute('USE v0')
-    # create tables
-    sesh.execute(
-        '''
-        CREATE_TABLE users_by_suri (
-            (suri text, (uid uuid, active boolean)) PRIMARY_KEY,
-            name text
-        )
-    ''')
-    sesh.execute(
-        '''
-        CREATE_TABLE users_by_uid (
-            (uid uuid, (suri text, active boolean)) PRIMARY_KEY,
-            name text
-        )
-    ''')
-   sesh.execute(
-       '''
-       CREATE_TABLE events_by_evid (
-            evid uuid PRIMARY_KEY,
-            host text,
-            pin int
-        )
-    ''')
-   sesh.execute(
-        '''
-        CREATE_TABLE cues_by_evid (
-            (evid uuid, (cid uuid, next text)) PRIMARY_KEY,
-            on_deck text,
-            active boolean  
-        )
-    ''')
-   return sesh
-   # this is enough to PoC for API now
+Traq = collections.namedtuple('Traq', ['suri', 'P'])
+DynaQ = List[Traq]
 
 class BaseUser(object):
     __metaclass__ = abc.ABCMeta
 
-    evid=None
-    host=False
-    def __init__(self, suri, uid, uname):
+    def __init__(self, suri, uid, name):
         self.suri=suri
         self.uid=uid
-        self.uname=uname
-        self._active=False
-        self._host=False
-        _num_users++
-        self._joined_at=arrow.now()
+        self.name=name
+
+    @abstractmethod
+    def is_active(self):
+        return False
+
+    @abstractmethod
+    def is_host(self):
+        return False
 
     def __repr__(self):
-        return '<User(uid={self.uid!r},suri={self.suri!r})>'.format(self=self)
+        return '<User(suri={self.suri!r},uid={self.uid!r})>'.format(self=self)
 
 class Host(BaseUser):
     
-    # pass in OBJECTS not IDs dummy!
-    def __init__(self, ev, u, save_to_playlist=False):
-        self.event=ev
-        self.event_name=ev.name
-        self.user=u
+    def __init__(self, user, event):
+        super(Host, self).__init__(user.suri, user.uid, user.name)
+        self.event=event
+
+    def is_active(self):
+        return True
+
+    def is_host(self):
+        return False
+
+class Attendee(BaseUser):
+    
+    def __init__(self, user, event):
+        super(Attendee, self).__init__(user.suri, user.uid, user.name)
+        self.event=event
+
+    def is_active(self):
+        return True
+
+    def is_host(self):
+        return False
+
+
+class Inactive(BaseUser):
+
+    def __init__(self, user):
+        super(Inactive, self).__init__(user.suri, user.uid, user.name)
+
+    def is_active(self):
+        return False
+
 
 class Event(object):
-    '''
-    How to generate unique event IDs?
-
-    # need more methods to describe state: "is active" or "is configured" etc...
-    '''
-    def __init__(self, evid, name, host, save_to_playlist=False):
+    
+    def __init__(self, evid, name, host):
         self.evid=evid
         self.name=name
-        if _check_suri_format(host) != 0:
-            raise 
         self.host=host # TODO verify host is valid suri
-        self.create_at=arrow.now()
-        self.last_active=arrow.now()
-        self.played=[]
 
     def _check_activity(self):
         return
@@ -105,9 +85,67 @@ class Cue(object):
     def __init__(self, cid, evid):
         self.cid=cid
         self.evid=evid
-        self.now_playing=None
         self.next=None
         self.queue=None # TODO experiment with data structures to maintain list of Tracks
+
+def _setup_db(sesh):
+    # check if db configured already
+    sesh.row_factory=ordered_dict_factory
+    # create keyspace 
+    sesh.execute("""
+        CREATE KEYSPACE IF NOT EXISTS v0
+        WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3 }'
+    """)
+    # create tables
+    '''
+    EVENTUAL OPTIMIZATION
+    sesh.execute("""
+        CREATE_TABLE IF NOT EXISTS v0.users_by_suri (
+            (suri text, (uid uuid, active boolean)) PRIMARY_KEY,
+            name text
+        )
+    """)
+    sesh.execute("""
+        CREATE_TABLE IF NOT EXISTS v0.users_by_uid (
+            (uid uuid, (suri text, active boolean)) PRIMARY_KEY,
+            name text
+        )
+    """)
+    '''
+    sesh.execute("""
+        CREATE_TABLE IF NOT EXISTS v0.users (
+            uid uuid PRIMARY_KEY,
+            suri text,
+            active boolean,
+            name text
+        )
+    """)
+    sesh.execute("""
+       CREATE_TABLE IF NOT EXISTS v0.events (
+            evid uuid PRIMARY_KEY,
+            host tuple<uuid, text>,
+            cid uuid,
+            pin int,
+            np text,
+            attendees list<tuple<uuid, text>>,
+            created_at datetime,
+            ended_at datetime
+        )
+    """)
+    sesh.execute("""
+        CREATE_TABLE IF NOT EXISTS v0.cues (
+            cid uuid PRIMARY_KEY,
+            evid uuid,
+            on_deck text,
+            queue list<tuple<text, double>>
+        )
+    """)
+    create_event=sesh.prepare("INSERT INTO v0.events (evid, host) VALUES (?, ?)")
+    create_cue=sesh.prepare("INSERT INTO v0.cues (cid, evid) VALUES (?, ?)")
+    
+    prepared_stmts = {}
+
+    return sesh, prepared_stmts
 
 class UserSchema(Schema):
     uid=fields.Int()
