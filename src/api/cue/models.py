@@ -25,7 +25,7 @@ class BaseUser(object):
         return False
 
     def __repr__(self):
-        return '<User(suri={self.suri!r},uid={self.uid!r})>'.format(self=self)
+        return '<User(suri={self.suri},uid={self.uid})>'.format(self=self)
 
 class Host(BaseUser):
     
@@ -72,7 +72,7 @@ class Event(object):
         return
 
     def __repr__(self):
-        return '<Event(evid={self.evid})>'.format(self=self)
+        return '<Event(evid={self.evid},name)>'.format(self=self)
 
     def __deinit__(self):
         '''
@@ -88,64 +88,6 @@ class Cue(object):
         self.next=None
         self.queue=None # TODO experiment with data structures to maintain list of Tracks
 
-def _setup_db(sesh):
-    # check if db configured already
-    sesh.row_factory=ordered_dict_factory
-    # create keyspace 
-    sesh.execute("""
-        CREATE KEYSPACE IF NOT EXISTS v0
-        WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3 }'
-    """)
-    # create tables
-    '''
-    EVENTUAL OPTIMIZATION
-    sesh.execute("""
-        CREATE_TABLE IF NOT EXISTS v0.users_by_suri (
-            (suri text, (uid uuid, active boolean)) PRIMARY_KEY,
-            name text
-        )
-    """)
-    sesh.execute("""
-        CREATE_TABLE IF NOT EXISTS v0.users_by_uid (
-            (uid uuid, (suri text, active boolean)) PRIMARY_KEY,
-            name text
-        )
-    """)
-    '''
-    sesh.execute("""
-        CREATE_TABLE IF NOT EXISTS v0.users (
-            uid uuid PRIMARY_KEY,
-            suri text,
-            active boolean,
-            name text
-        )
-    """)
-    sesh.execute("""
-       CREATE_TABLE IF NOT EXISTS v0.events (
-            evid uuid PRIMARY_KEY,
-            host tuple<uuid, text>,
-            cid uuid,
-            pin int,
-            np text,
-            attendees list<tuple<uuid, text>>,
-            created_at datetime,
-            ended_at datetime
-        )
-    """)
-    sesh.execute("""
-        CREATE_TABLE IF NOT EXISTS v0.cues (
-            cid uuid PRIMARY_KEY,
-            evid uuid,
-            on_deck text,
-            queue list<tuple<text, double>>
-        )
-    """)
-    create_event=sesh.prepare("INSERT INTO v0.events (evid, host) VALUES (?, ?)")
-    create_cue=sesh.prepare("INSERT INTO v0.cues (cid, evid) VALUES (?, ?)")
-    
-    prepared_stmts = {}
-
-    return sesh, prepared_stmts
 
 class UserSchema(Schema):
     uid=fields.Int()

@@ -6,28 +6,66 @@ from flask_restful import Api
 from cassandra.cluster import Cluster
 from cassandra.query import ordered_dict_factory
 
-log = logging.getLogger()
+log = logging.getLogger('cue-api-log')
 log.setLevel('DEBUG')
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
 log.addHandler(handler)
 
-app = Flask(__name__) # or app = Flask(name=u'cue-api')
+app = Flask(__name__)
 api = Api(app)
 cluster = Cluster(['cassandra']) # see docker-compose link
 session = cluster.connect()
-
-from cue.models import _setup_db
-session,prepared_stmts=_setup_db(session) # potential bug: just set up in this file?
-session.execute('USE v0')
-# create API
-api.add_resource(User, '/user/<int:uid>', '/user/<int:suri>')
-api.add_resource(Event, '/event/<int:evid>')
-api.add_resource(Events, '/events')
-api.add_resource(Cue, '/cue')
-api.add_resource(Track, '/track')
-
+session.row_factory=ordered_dict_factory
+session.execute("""
+    CREATE KEYSPACE IF NOT EXISTS v0
+    WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3 }'
+""")
+session.execute("""
+    CREATE_TABLE IF NOT EXISTS v0.users_by_uid (
+        uid UUID,
+        suri text,
+        active boolean,   
+        name text,
+        PRIMARY_KEY (uid, (suri, active))
+        )
+""")
+session.execute("""
+    CREATE_TABLE IF NOT EXISTS v0.users_by_suri (
+        uid UUID,
+        suri text,
+        active boolean,
+        name text,
+        PRIMARY_KEY (suri, (uid, active))
+    )
+""")
+session.execute("""
+    CREATE_TABLE IF NOT EXISTS v0.events (
+        evid UUID PRIMARY_KEY,
+        host tuple<UUID, text>,
+        cid UUID,
+        pin int,
+        np text,
+        attendees list<tuple<UUID, text>>,
+        created_at datetime,
+        ended_at datetime
+    )
+""")
+session.execute("""
+    CREATE_TABLE IF NOT EXISTS v0.cues (
+        cid UUID PRIMARY_KEY,
+        evid UUID,
+        next text,
+        nextnext text,
+        queue list<tuple<text, double>>
+    )
+""")
+session.execute("USE v0")
+api.add_resource(Users, '/users/<str:uid>', '/users/<str:suri>')
+api.add_resource(Event, '/events', '/events/<str:evid>')
+api.add_resource(Cue, '/cues/<str:cid>')
 
 
 if __name__=="__main__":
     app.run(port=10101, debug=True, use_reloader=False)    
+    prepared = {

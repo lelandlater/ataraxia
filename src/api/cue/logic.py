@@ -2,8 +2,9 @@ import arrow
 import base64, M2Crypto
 import json
 import random
-
-from models import User, Event, Cue, Track
+import typing
+from models import Host, Attendee, Inactive, Event, Cue, Track
+from . import session
 from cassandra import ConsistencyLevel
 """
 Application logic for Cue AKA "the guts" of the weighted playlist.
@@ -19,6 +20,7 @@ Cue API error codes
 255 generic error
 """
 # prepare statements for lower CPU utilization
+# how do I get the session object into ./resources.py ?
 class Error(Exception):
     def __init__(self, message):
         super(Exception, self).__init__()
@@ -38,17 +40,17 @@ def generate_id(num_bytes=16):
     return base64.b64encode(m2Crypto.m2.rand_bytes(num_bytes))
 
 def _create_user(suri) -> int:
-    # check if user with same Spotify URI exists
-    s_user=session.execute(prepared['get_user_by_suri'].format(suri))
-    if s_user is not None:
+    s_user=session.execute("SELECT * FROM users_by_suri WHERE suri={}".format(suri)
+    if s_user is not None: # null or None? type returned by CQL miss on SELECT
         raise CueAPIResourceCreationError
-    if s_user is None:
+    uid=generate_id()
+    chk_unique=session.execute("SELECT * FROM users_by_uid WHERE uid={}".format(uid))
+    while chk_unique != None:
         uid=generate_id()
-        chk_unique=session.execute('SELECT * FROM users WHERE uid={}'.format(uid))
-        while chk_unique != None:
-            uid=generate_id()
-            unq=session.execute('SELECT * FROM users WHERE uid={}'.format(uid))
-        session.execute('INSERT INTO ')
+        unq=session.execute("SELECT * FROM users WHERE uid={}".format(uid))
+    name='' # Spotify curl based on user
+    session.execute("INSERT INTO users_by_suri (suri, uid, name) VALUES ({0}, {1}, {2})".format(suri, uid, name))
+    session.execute
     return 0
 
 '''
@@ -61,12 +63,12 @@ def _create_event(name):
 # enforce uniqueness in the result set for 
 # - get_user_by_ui()
 # - get_user_by_suri()
-# - get_next_track()
+# - get_next_track_from_cue()
 
 def _get_all_users():
     users=session.execute("SELECT * FROM users")
     return users
-    
+
 def _get_user(uid):
     session.execute('')
 
