@@ -65,16 +65,6 @@ def _create_event(name):
 # - get_user_by_suri()
 # - get_next_track_from_cue()
 
-def _get_all_users():
-    users=session.execute("SELECT * FROM users")
-    return users
-
-def _get_user(uid):
-    session.execute('')
-
-def _get_event_by_evid(evid):
-    session.execute('')
-
 def _check_suri_format(inp):
     """
     @param inp, a Spotify resource identifier
@@ -82,7 +72,8 @@ def _check_suri_format(inp):
     
     return False
     """
-    return 0
+    # some string operations
+    return True
 
 def _add_user_to_event(uid, suri, evid):
         session.execute("UPDATE v0.events SET attendees = attendees + [({}, {})] WHERE evid={}".format(uid, suri, evid)

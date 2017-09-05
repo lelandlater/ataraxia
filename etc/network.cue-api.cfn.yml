@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '09-09-2010'
+AWSTemplateFormatVersion: '2010-09-09'
 
 Description: Network framework for the Cue API. Contains VPC and intracloud networking.
 

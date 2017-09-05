@@ -7,7 +7,7 @@ Resources:
   CueServer:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: {{ ubuntu_image }} # ubuntu 16.04 LTS ; hvm:ebs-ssd ; {{ region }} ## make AMIs for dev?
+      ImageId: ami-09d2fb69 # ubuntu 16.04 LTS ; hvm:ebs-ssd ; us-west-1 ## make AMIs for dev?
       InstanceType: t2.small
       KeyName: key0-cue-api
       NetworkInterfaces:

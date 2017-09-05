@@ -15,6 +15,11 @@ log.addHandler(handler)
 app = Flask(__name__)
 api = Api(app)
 cluster = Cluster(['cassandra']) # see docker-compose link
+# celery / Redis container connect
+# worker = celery.init_app(app) ...
+# start HTTP2 connection to t
+
+### START DB SETUP
 session = cluster.connect()
 session.row_factory=ordered_dict_factory
 session.execute("""
@@ -42,7 +47,8 @@ session.execute("""
 session.execute("""
     CREATE_TABLE IF NOT EXISTS v0.events (
         evid UUID PRIMARY_KEY,
-        host tuple<UUID, text>,
+        host tuple<UUID, text>,,
+        name text,
         cid UUID,
         pin int,
         np text,
@@ -57,15 +63,17 @@ session.execute("""
         evid UUID,
         next text,
         nextnext text,
-        queue list<tuple<text, double>>
+        queue list<tuple<text, double>>,
+        calibrated boolean
     )
 """)
 session.execute("USE v0")
+### END DB SETUP
+
 api.add_resource(Users, '/users/<str:uid>', '/users/<str:suri>')
 api.add_resource(Event, '/events', '/events/<str:evid>')
 api.add_resource(Cue, '/cues/<str:cid>')
 
 
 if __name__=="__main__":
-    app.run(port=10101, debug=True, use_reloader=False)    
-    prepared = {
+    app.run(port=10101, debug=True, use_reloader=False)

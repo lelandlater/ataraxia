@@ -1,6 +1,6 @@
 import os
 from argparse import ArgumentParser
-from Jinja2 import Template
+from jinja2 import Template
 
 ubuntu_image_map = {
     'ap-northeast-1': 'ami-ea4eae8c',
@@ -43,7 +43,7 @@ def _render_docker_compose():
     pass
 
 if __name__=='__main__':
-    parser=ArgumentParser.(description="configure cue-api with environment variables")
+    parser=ArgumentParser(description="configure cue-api with environment variables")
     parser.add_argument('region')
     """
     parser.add_argument('ak')
