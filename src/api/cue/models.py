@@ -1,8 +1,8 @@
 import abc
 import arrow
 import collections
+import re
 from typing import Tuple, List
-from cue import _check_suri_format, CueAPIResourceCreationError
 from marshmallow import Schema, fields
 
 Traq = collections.namedtuple('Traq', ['suri', 'P'])
@@ -11,16 +11,17 @@ DynaQ = List[Traq]
 class BaseUser(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, suri, uid, name):
+    def __init__(self, suri, uid, name, auth=None):
         self.suri=suri
         self.uid=uid
         self.name=name
+        self.auth=auth
 
-    @abstractmethod
+    @abc.abstractmethod
     def is_active(self):
         return False
 
-    @abstractmethod
+    @abc.abstractmethod
     def is_host(self):
         return False
 
@@ -88,28 +89,33 @@ class Cue(object):
         self.next=None
         self.queue=None # TODO experiment with data structures to maintain list of Tracks
 
+def _validate_suri(suri):
+    res=re.search('[a-z0-9][a-z0-9-]{0,31}:', suri) # TODO run tests on this regex for Spotidy URNs
+    if res:
+        return True
+    return False
 
 class UserSchema(Schema):
-    uid=fields.Int()
+    uid=fields.Int(dump_only=True)
     suri=fields.Str()
     name=fields.Str()
     active=fields.Bool()
     host=fields.Bool()
-    evid=fields.Int()
+    evid=fields.Int(dump_only=True)
 
 class EventSchema(Schema):
-    evid=fields.Int()
+    evid=fields.Int(dump_only=True)
     host=fields.Str()
     pin=fields.Int()
 
 class CueSchema(Schema):
-    cid=fields.Int()
+    cid=fields.Int(dump_only=True)
     playing=fields.Str()
     next=fields.Str()
     seed=fields.Str()
 
 class TrackSchema(Schema):
-    tid=fields.Int()
+    tid=fields.Int(dump_only=True)
     cue=fields.Int()
     index=fields.Float()
     

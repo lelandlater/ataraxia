@@ -1,7 +1,9 @@
 import cue
+import os
 import json
 import logging
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Api
 from cassandra.cluster import Cluster
 from cassandra.query import ordered_dict_factory
@@ -13,11 +15,11 @@ handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(
 log.addHandler(handler)
 
 app = Flask(__name__)
+cfg = os.getenv('CONFIG', 'config.DevelopmentConfig')
+app.config.from_object(cfg)
+CORS(app)
 api = Api(app)
-cluster = Cluster(['cassandra']) # see docker-compose link
-# celery / Redis container connect
-# worker = celery.init_app(app) ...
-# start HTTP2 connection to t
+cluster = Cluster([app.config['CASSANDRA_HOST']])
 
 ### START DB SETUP
 session = cluster.connect()

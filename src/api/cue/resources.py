@@ -8,7 +8,8 @@ from . import CueAPIRequestError, \
 import sys
 
 # from .. import session -- make sure it's the same session as ../run.py
-log = logging.getLogger('cue-api-log')
+req_log = logging.getLogger('cue-api-log.requests')
+req_err_log = logging.getLogger('cue-api-log.request-errors')
 
 _create_event=session.prepare("INSERT INTO events (evid, host) VALUES (?, ?)")
 _create_cue=session.prepare("INSERT INTO cues (cid, evid) VALUES (?, ?)")
@@ -24,6 +25,9 @@ _get_next_track_by_cid=session.prepare("SELECT (next) FROM cues WHERE cid=?")
 class User(Resource):
     def get(self, suri):
         try:
+            # validate JWT
+            query=_get_event_by_evid()
+            # marshall to JSON
             resp=make_response(_get_user_by_suri(suri))
         except CueAPIRequestError as e:
             resp=make_reponse(e)
@@ -37,8 +41,8 @@ class User(Resource):
             resp=make_response(_get_user_by_uid(uid), 200)
         except CueAPIRequestError as e:
             resp=make_reponse(e)
-        resp.headers.add['Content-Type']='text/json'
-        resp.headers.add['Content-Length']=sys.getsizeof(resp))
+        resp.headers['Content-Type']='text/json'
+        resp.headers['Content-Length']=sys.getsizeof(resp))
         return resp
 
     def put(self, uid, active): 

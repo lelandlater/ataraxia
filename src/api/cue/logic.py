@@ -1,6 +1,8 @@
 import arrow
 import base64, M2Crypto
 import json
+import jwt
+import logging
 import random
 import typing
 from models import Host, Attendee, Inactive, Event, Cue, Track
@@ -16,11 +18,12 @@ Cue API error codes
 14  user does not exist
 32  already exists
 33  user already exists
+41  could not create JWT
 ...
 255 generic error
 """
-# prepare statements for lower CPU utilization
-# how do I get the session object into ./resources.py ?
+log = logging.getLogger('cue-api-log')
+
 class Error(Exception):
     def __init__(self, message):
         super(Exception, self).__init__()
@@ -36,13 +39,18 @@ class CueAPIResourceCreationError(Error):
         super(Error, self).__init__(message)
         self.code=code
 
+class JWTCreationError(Error):
+    def __init__(self, message, code=41):
+        super(Error, self).__init__(message)
+        self.code=code
+
 def generate_id(num_bytes=16):
     return base64.b64encode(m2Crypto.m2.rand_bytes(num_bytes))
 
 def _create_user(suri) -> int:
     s_user=session.execute("SELECT * FROM users_by_suri WHERE suri={}".format(suri)
     if s_user is not None: # null or None? type returned by CQL miss on SELECT
-        raise CueAPIResourceCreationError
+        raise CueAPIResourceCreationError("A user with this suri already exists.")
     uid=generate_id()
     chk_unique=session.execute("SELECT * FROM users_by_uid WHERE uid={}".format(uid))
     while chk_unique != None:
@@ -50,12 +58,29 @@ def _create_user(suri) -> int:
         unq=session.execute("SELECT * FROM users WHERE uid={}".format(uid))
     name='' # Spotify curl based on user
     session.execute("INSERT INTO users_by_suri (suri, uid, name) VALUES ({0}, {1}, {2})".format(suri, uid, name))
-    session.execute
+    # ...
     return 0
 
-'''
-how many prebuilt reads is too many?
-'''
+def generate_auth_token(uid):
+    """
+    Generate an auth token for use with JWT.
+    source: https://realpython.com/blog/python/token-based-authentication-with-flask/
+
+    :return: string
+    """
+    try:
+        payload = {
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+            'iat': datetime.datetime.utcnow(),
+            'sub': uid
+        }
+        return jwt.encode(
+            payload,
+            app.config.get('SECRET_KEY'),
+            algorithm='HS256'
+        )
+    except JWTCreationError as e:
+        return e
 
 def _create_event(name):
     pass
