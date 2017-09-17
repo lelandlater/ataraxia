@@ -2,9 +2,6 @@ import jwt
 import logging
 from flask import make_response
 from flask_restful import Resource
-from . import CueAPIRequestError, \
-    UserSchema, EventSchema, CueSchema, TrackSchema, \
-    generate_id, _create_user, check_suri_format
 import sys
 
 # from .. import session -- make sure it's the same session as ../run.py
@@ -31,8 +28,8 @@ class User(Resource):
             resp=make_response(_get_user_by_suri(suri))
         except CueAPIRequestError as e:
             resp=make_reponse(e)
-        resp.headers['Content-Type']='text/json'
-        resp.headers['Content-Length']=sys.getsizeof(resp))
+        resp.headers['Content-Type']='application/json'
+        resp.headers['Content-Length']=sys.getsizeof(resp)
         return resp
 
     def get(self, uid): # jwt something
@@ -41,22 +38,21 @@ class User(Resource):
             resp=make_response(_get_user_by_uid(uid), 200)
         except CueAPIRequestError as e:
             resp=make_reponse(e)
-        resp.headers['Content-Type']='text/json'
-        resp.headers['Content-Length']=sys.getsizeof(resp))
+        resp.headers['Content-Type']='application/json'
+        resp.headers['Content-Length']=sys.getsizeof(resp)
         return resp
 
     def put(self, uid, active): 
-        try:
-           # JWT stuff
-        except except CueAPIRequestError as e:
-            resp=make_response(e)
-        resp.
+        return 0
 
     def post(self, suri):
         try:
             resp=make_response(_create_user(suri))
         except CueAPIRequestError as e:
-        return reps
+           resp=make_reponse(e)
+        resp.headers['Content-Type']='application/json'
+        resp.headers['Content-Length']=sys.getsizeof(resp)
+        return resp
 
 class Event(Resource):
     def get(self, evid):
@@ -75,14 +71,18 @@ class Events(Resource):
         try:
             # something something paginated responses ...
             resp=make_response(_get_events, 200) # paginate repsines to this huge call
-
+        except CueAPIRequestError as e:
+            resp=make_reponse(e)
+        resp.headers.add['Content-Type']='application/json'
+        resp.headers.add['Content-Length']=sys.getsizeof(resp)
+        return resp
     def get(self, evid):
         try:
             resp=make_reponse(_get_event_by_evid(evid), 200)
         except CueAPIRequestError as e:
             resp=make_reponse(e)
-        resp.headers.add['Content-Type']='text/json'
-        resp.headers.add['Content-Length']=sys.getsizeof(resp))
+        resp.headers.add['Content-Type']='application/json'
+        resp.headers.add['Content-Length']=sys.getsizeof(resp)
         return resp
 
 

@@ -1,0 +1,15 @@
+[Unit]
+Description=The Cue API v0
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+Restart=always
+WorkingDirectory=/home/ubuntu/
+ExecStart=uwsgi --ini uwsgi.ini
+TimeoutStartSec=10
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

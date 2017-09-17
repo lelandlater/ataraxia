@@ -17,7 +17,7 @@ log.addHandler(handler)
 app = Flask(__name__)
 cfg = os.getenv('CONFIG', 'config.DevelopmentConfig')
 app.config.from_object(cfg)
-CORS(app)
+CORS(app) # for cross-domain API calls in the GUI
 api = Api(app)
 cluster = Cluster([app.config['CASSANDRA_HOST']])
 
