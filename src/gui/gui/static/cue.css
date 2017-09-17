@@ -8,6 +8,22 @@
 	font-family: 'Lato';
 	font-weight: 700;
   color: #5555ff;
+  font-size: 6vw;
+}
+
+.header-text {
+  padding: 12px 4px 12px 12px;
+}
+
+
+.body-text {
+  width: 100%;
+  display: flex;
+  font-family: 'Helvetica';
+  font-size: 2vw;
+  justify-content: flex-start;
+  padding: 30px 12px 30px 30px;
+  color: #4444ff;
 }
 
 .cue-gradient0 {
@@ -21,6 +37,10 @@
 
 .cue-gradient1 {
 
+}
+
+.text-container {
+  padding-left: 24px;
 }
 
 .cue-button {

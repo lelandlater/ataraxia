@@ -6,15 +6,15 @@
 
 {% block top %}
 <div class="nav-horizontal">
-    {% for item in nav.end %}
-    <div class="nav-horizontal-right-item"><a href="{{ item.url }}"><h1 class="simple-link-button">{{ item.label }}</h1></a></div>
+    {% for item in items %}
+    <div class="nav-horizontal-item-centered"><h1 class="simple-link-button"><a href="{{ item.url }}">{{ item.label }}</a></h1></div>
     {% endfor %}
 </div>
 {% endblock %}
 
 {% block mid %}
-<div class="contact-links">
-    <h1 class="cue-text contact-links-item">contact@cue.zone</h1>
+<div class="list-vertical">
+    <h1 class="cue-text list-vertical-item">contact@cue.zone</h1>
 </div>
 {% endblock %}
 

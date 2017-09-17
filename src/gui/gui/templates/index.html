@@ -4,18 +4,6 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='cue.css') }}"/>
 {% endblock %}
 
-{% block top %}
-<div class="nav-horizontal">
-    {% for item in nav.start %}
-    <div class="nav-horizontal-left-item"><a href="{{ item.url }}"><h1 class="simple-link-button">{{ item.label }}</h1></a></div>
-    {% endfor %}
-
-     {% for item in nav.end %}
-    <div class="nav-horizontal-right-item"><a href="{{ item.url }}"><h1 class="simple-link-button">{{ item.label }}</h1></a></div>
-    {% endfor %}
-</div>
-{% endblock %}
-
 {% block logo %}
 <div class="cue-gradient0">
 <div class="logo">
@@ -25,16 +13,16 @@
 {% endblock %}
 
 {% block mid %}
+<div class="nav-horizontal">
 {% for button in buttons %}
-<div class="nav-background-gradient cue-button cue-gradient1">
-    <h1><a href="{{ url_for(index) }}">"{{ button.label }}"</a></h1>
+    <div class="nav-horizontal-item-centered">
+    <h1 class="simple-link-button"><a href="{{  button.url }}">{{ button.label }}</a></h1>
+    </div>
 {% endfor %}
-</div>
 </div>
 {% endblock %}
 
 {% block body %}
-
 {% endblock %}
 
 {% block bottom %}

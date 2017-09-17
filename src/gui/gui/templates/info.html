@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block links %}
+<link rel="stylesheet" href="{{ url_for('static', filename='cue.css') }}"/>
+{% endblock %}
+
+{% block logo %}
+<div class="cue-gradient0">
+<div class="logo">
+    <h1 class="cue-logo">CUE</h1>
+</div>
+</div>
+{% endblock %}
+
+{% block top %}
+<div class="nav-horizontal">
+    {% for item in items %}
+    <div class="nav-horizontal-item-centered"><h1 class="simple-link-button"><a href="{{ item.url }}">{{ item.label }}</a></h1></div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="text-container">
+    <h1 class="header-text cue-text">CONTENT0</h1>
+    <p class="body-text">This is informational text.</p>
+    <br><br>
+    <h1 class="header-text cue-text">CONTENT1</h1>  
+    <p class="body-text">More informartion.</p>
+<div>
+{% endblock %}
