@@ -13,21 +13,21 @@ def index():
     return make_response(html_minify(rendered_html), 200)
 
 def contact():
-    items = [NavItem(url_for('index'), 'HOME')]
+    items = [NavItem(url_for('index'), '^')]
     rendered_html = render_template('contact.html', items=items, title='Contact Cue')
     return make_response(html_minify(rendered_html), 200)
 
 def info():
-    items = [NavItem(url_for('index'), 'HOME')]
+    items = [NavItem(url_for('index'), '^')]
     rendered_html = render_template('info.html', items=items, title='Contact Cue')
     return make_response(html_minify(rendered_html), 200)
 
 def request_auth():
-    items = [NavItem(url_for('index'), 'HOME')]
+    items = [NavItem(url_for('index'), '^')]
     rendered_html = render_template('request_auth.html', items=items, title='Contact Cue')
     return make_response(html_minify(rendered_html), 200)
 
 def access():
-    items = [NavItem(url_for('index'), 'HOME')]
+    items = [NavItem(url_for('index'), '^')]
     rendered_html = render_template('access.html', items=items, title='Contact Cue')
     return make_response(html_minify(rendered_html), 200)

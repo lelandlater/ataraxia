@@ -12,17 +12,16 @@
 }
 
 .header-text {
-  padding: 12px 4px 12px 12px;
+  padding: 30px 4px 12px 12px;
+  font-weight: 200;
 }
 
-
 .body-text {
-  width: 100%;
   display: flex;
   font-family: 'Helvetica';
   font-size: 2vw;
   justify-content: flex-start;
-  padding: 30px 12px 30px 30px;
+  padding: 30px 12px 30px 20px;
   color: #4444ff;
 }
 
@@ -39,8 +38,13 @@
 
 }
 
+.cue-app-container {
+  
+}
 .text-container {
   padding-left: 24px;
+  height: 600px;
+  width: 100%;
 }
 
 .cue-button {

@@ -23,3 +23,5 @@ class ProductionConfig(BaseConfig):
     SECRET_KEY = os.getenv('PRODUCTION_SECRET_KEY')
     DEBUG = False
     CASSANDRA_HOST = 'https://db.cue.zone/'
+
+CASSANDRA_HOST='0.0.0.0'

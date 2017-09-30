@@ -18,6 +18,7 @@ services:
       - 10101
     links:
       - cassandra0:cassandra
+      - redis
   cassandra0:
     image: cassandra
     container_name: cassandra_0
@@ -54,9 +55,7 @@ volumes:
   static:
   redis:
     driver: rexray/ebs
-    `
   cassandra:
-  
-  #  driver: rex-ray
+    driver: rex-ray/ebs
 
 
