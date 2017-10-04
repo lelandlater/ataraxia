@@ -1,3 +1,4 @@
+from . import log
 """
 Application logic for Cue AKA "the guts" of the weighted playlist.
 
@@ -10,6 +11,8 @@ Cue API error codes
 33  user already exists
 41  could not create JWT
 50  did not authorize JWT
+...
+156 Can't connect to the backend
 ...
 255 generic error
 """
@@ -36,5 +39,10 @@ class JWTCreationError(Error):
 
 class ClientAuthorizationError(Error):
     def __init__(self, message, code=50):
-        super(Errro, self).__init__(message)
+        super(Error, self).__init__(message)
+        self.code=code
+
+class CannotConnectToBackendError(Error):
+    def __init__(self, message="Cannot connect to the database endpoint. Check CueAPIDatabase.session in database.py", code=156):
+        super(Error, self).__init__(message)
         self.code=code
