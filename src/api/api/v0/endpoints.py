@@ -2,7 +2,7 @@ import sys
 from models import cue, event, user
 from flask import add_url_rule, redirect, make_response, url_for, request
 from flask.views import MethodView
-from .decorators import api
+from . import decorators.api,decorators.auth
 
 v0 = Blueprint('v0', __name__, url_prefix='/v0')
 
@@ -10,7 +10,7 @@ def index():
     return redirect("https://docs.cue.zone/api", code=301)
 
 class UserAPI(MethodView):
-    decorators=['auth', 'api']
+    decorators=[decorators.api,decorators.auth]
 
     def get(self):
         """
@@ -26,26 +26,26 @@ class UserAPI(MethodView):
         resp = make_response(user._get_user_by_uid(uid))
         return resp
 
-    def post(self, suri):
+    def post(self, uid):
         """
         :param: user Spotify unique identifier
         """
-        resp=make_response(cue._get_user_by_suri(suri))        
+        resp=make_response(cue._get_user_by_suri(uid))        
         resp.headers['Content-Type']='application/json'
         resp.headers['Content-Length']=sys.getsizeof(resp)  
         return resp
 
-    def post(self, uid, suri):
-        suri=request.values['suri'] # what happens if not a real value?
-            if user._valid_suri(suri) and not user._user_exists_with_suri(suri):
-                resp=make_response(cue._create_user_(suri))
+    def post(self):
+        pass
+
 
 
 @v0.route('/events/<uuid:evid>/')
     """
     :param: user 
     """
-    if request.emthod
+    if request.method == 'GET':
+
     resp=make_response(event._get_event_by_evid() 
 
 v0.add_url_rule('/', index)

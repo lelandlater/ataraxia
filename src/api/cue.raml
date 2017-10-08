@@ -5,68 +5,45 @@ description: # Cue API ## Build shared playlists
 version: v0
 baseUri: https://api.cue.zone/{version}
 protocols: [ HTTPS ]
-documentaion: https://api.cue.zone/docs
-  - title: 
+documentation: https://docs.cue.zone/api
+  - title: CueAPIReference
 mediaType: application/json
-securitySchemes:
-  oauth_2_0: !include securitySchemes/oauth_2_0.raml
-resourceTypes:
-  collection: !include resourceTypes/collection.raml
-    get:
-      responses:
-        200:
-          body:
-            type: <<resourcePathName>>
-    post:
-      responses:
-        200:
-          body:
-            type: <<resourcePathName | !singularize>>
-  member:     !include resourceTypes/member.raml
-    get:
-      responses:
-        200:
-          body:
-            type: <<resourcePathName>>
-traits:
-  secured:    !include traits/secured.raml
-  paged:      !include traits/paged.raml
-types:
-  Event:  !include types/event.raml
-  Events: !include types/events.raml
-  User:   !include types/user.raml
-  Cue:    !include types/cue.raml
-
-/events:
-  type: collection
-  /{evid}:
-    get:
-      description:
-      responses:
-        200:
-          body:
-            application/json:
-    post:
-      description:
-      responses:
-        200:
-          body:
-            application/json:
-
 
 /users:
   /{uid}:
     get:
     post:
     put:
-    deleter 
-  /{suri}:
+    delete:
+
+/events:
+  /{evid}:
     get:
-    post:
-    put:
+      description: An event's host, returned as UUID.
+      queryParameters:
+        host:
+          displayName: Host
+          description: A mapping of a Cue user UUID to a Spotify user URI as varchar.
+          type: uuid
+          example: ac85c9cb-e2bc-4879-895d-8885810e49d0
+          required: false
+        name:
+          displayName: Event Name
+          description: The name of the event, set by the host at creation.
+          example: Blake House Party
+          required: false
+        cid:
+          displayName: Cue ID
+          description: Unique identifier for a Cue (one per event).
+          type: uuid
+          example: ac85c9cb-e2bc-4879-895d-8885810e49d0
+          required: false
+
+    
+
 
 /cues:
-  /{cueid}:
+  /{cid}:
     get:
     post:
     put:

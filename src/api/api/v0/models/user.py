@@ -2,68 +2,72 @@ from cassandra.cqlengine.columns import Text, Boolean, UUID, \
     DateTime
 from cassandra.cqlengine.models import Model
 from marshmallow import Schema, fields
-from .. import session #????
+from ..database import db
 from ..errors import CueAPIResourceCreationError
+from ..util import 
 
-# models
-class UserBySuri(Model):
-    suri = Text(primary_key=True)
-    uid = UUID()
-    active = Boolean()
-    name = Text()
-    joined_at = DateTime()
+class CueUser:
+    class UserBySuri(Model):
+        suri = Text(primary_key=True)
+        uid = UUID()
+        active = Boolean()
+        name = Text()
+        joined_at = DateTime()
 
-class UserByUid(Model):
-    uid = UUID(primary_key=True)
-    suri = Text()
-    active = Boolean()
-    name = Text()
-    joined_at = DateTime()
+    class UserByUid(Model):
+        uid = UUID(primary_key=True)
+        suri = Text()
+        active = Boolean()
+        name = Text()
+        joined_at = DateTime()
 
-# helper functions
-def _generate_auth_token(uid):
-    """
-    Generate an auth token for use with JWT.
-    source: https://realpython.com/blog/python/token-based-authentication-with-flask/
+    def _generate_auth_token(uid):
+        """
+        Generate an auth token for use with JWT.
+        source: https://realpython.com/blog/python/token-based-authentication-with-flask/
 
-    :return string
-    """
-    try:
-        payload = {
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
-            'iat': datetime.datetime.utcnow(),
-            'sub': uid
-        }
-        return jwt.encode(
-            payload,
-            app.config.get('SECRET_KEY'),
-            algorithm='HS256'
-        )
-    except JWTCreationError as e:
-        return e
+        :return string
+        """
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+                'iat': datetime.datetime.utcnow(),
+                'sub': uid
+            }
+            return jwt.encode(
+                payload,
+                app.config.get('SECRET_KEY'),
+                algorithm='HS256'
+            )
+        except JWTCreationError as e:
+            return e
 
-def _valid_suri(suri):
-    """
-    Validate the Spotify unique identifier as belonging to a user.
+    def _validate_suri(suri):
+        """
+        Validate the Spotify unique identifier as belonging to a user.
 
-    :return boolean TODO what is a valid suri? check spotify
-    """
-    res=re.match('[a-z0-9][a-z0-9-]{0,31}:', suri) # TODO implement this <---
-    if res:
-        return True
-    return False
+        :return boolean TODO what is a valid suri? check spotify
+        """
+        res=re.match('[a-z0-9][a-z0-9-]{0,31}:', suri)
+        ### IMPLEMENT
+        if res:
+            return True
+        return False
 
-def _user_exists_with_suri(suri):
+    def _user_exists_with_suri(suri):
     # IMPLEMENT
     return False
 
-def _user_exists_with_uid(uid):
+    def _user_exists_with_uid(uid):
     # IMPLEMENT
     return False
 
-# logic methods
-"""
-def _create_user(suri):
+    def _get_all_users():
+        pass
+
+    # logic methods
+    """
+    def _create_user(suri):
     s_user=session.execute("SELECT * FROM users_by_suri WHERE suri={}".format(suri)
     if s_user is not None: # null or None? type returned by CQL miss on SELECT
         raise CueAPIResourceCreationError("A user with this suri already exists.")
@@ -75,13 +79,18 @@ def _create_user(suri):
     name='' # Spotify curl based on user
     session.execute("INSERT INTO users_by_suri (suri, uid, name) VALUES ({0}, {1}, {2})".format(suri, uid, name))
     return 0
-"""
+    """
 
-# formatting
-class UserSchema(Schema):
-    uid=fields.Int(dump_only=True)
-    suri=fields.Str()
-    name=fields.Str()
-    active=fields.Bool()
-    host=fields.Bool()
-    evid=fields.Int(dump_only=True)
+    # formatting
+    class UserSchema(Schema):
+        uid=fields.Int(dump_only=True)
+        suri=fields.Str()
+        name=fields.Str()
+        active=fields.Bool()
+        host=fields.Bool()
+        evid=fields.Int(dump_only=True)
+
+
+
+
+

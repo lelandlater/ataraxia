@@ -1,0 +1,133 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cloud infrastructure for the Cue API.
+Resources:
+  XXXXXCueAPIVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.10.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        -
+          Key: version
+          Value: v0 # {{ version }}
+        -
+          Key: built_at
+          Value: 1007817 # {{ timestamp }}
+        -
+          Key: build_id
+          Value: 0123456789 # {{ build_id }}
+  XXXXXCueAPISubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.10.0.0/24
+      VpcId: !Ref XXXXXCueAPIVPC
+      MapPublicIpOnLaunch: true
+      Tags:
+        -
+          Key: version
+          Value: v0 # {{ version }}
+        -
+          Key: built_at
+          Value: 1007817 # {{ timestamp }}
+        -
+          Key: build_id
+          Value: 0123456789 # {{ build_id }}
+  SSHSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SSH (22)
+      VpcId: !Ref XXXXXCueAPIVPC
+      SecurityGroupIngress:
+        -
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  XXXXXCueAPISecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: GUI (443) or API (10101)
+      VpcId: !Ref XXXXXCueAPIVPC
+      SecurityGroupIngress:
+        -
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          FromPort: 10101
+          ToPort: 10101
+          CidrIp: 0.0.0.0/0
+      Tags:
+        -
+          Key: version
+          Value: v0 # {{ version }}
+        -
+          Key: built_at
+          Value: 1007817 # {{ timestamp }}
+        -
+          Key: build_id
+          Value: 0123456789 # {{ build_id }}
+  XXXXXCueAPIInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        -
+          Key: tag
+          Value: value
+  XXXXXCueAPIVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref XXXXXCueAPIInternetGateway
+      VpcId: !Ref XXXXXCueAPIVPC
+  XXXXXCueAPIRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref XXXXXCueAPIVPC
+      Tags:
+        - 
+          Key: tag
+          Value: value
+  XXXXXCueAPIRouteToInternet:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref XXXXXCueAPIInternetGateway
+      RouteTableId: !Ref XXXXXCueAPIRouteTable
+  XXXXXCueAPISubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref XXXXXCueAPIRouteTable
+      SubnetId: !Ref XXXXXCueAPISubnet
+  XXXXXCueAPIHostNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !GetAtt XXXXXCueAPISecurityGroup.GroupId
+        -
+          !GetAtt SSHSG.GroupId
+      SubnetId: !Ref XXXXXCueAPISubnet
+      PrivateIpAddress: 10.10.0.16
+      Tags:
+        -
+          Key: tag
+          Value: value
+  XXXXXCueAPIHostxyz:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-cd0f5cb6
+      InstanceType: t2.small
+      KeyName: key0-cue-api-v0
+      NetworkInterfaces:
+        -
+          NetworkInterfaceId: !Ref XXXXXCueAPIHostNetworkInterface
+          DeviceIndex: '0'

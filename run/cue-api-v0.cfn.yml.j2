@@ -1,0 +1,165 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cloud infrastructure for the Cue API.
+Resources:
+  {{ build_id }}CueAPIVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.10.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        -
+          Key: version
+          Value: {{ version }}
+        -
+          Key: built_at
+          Value: {{ timestamp }}
+        -
+          Key: build_id
+          Value: {{ build_id }}
+  {{ build_id }}CueAPISubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.10.0.0/24
+      VpcId: !Ref {{ build_id }}CueAPIVPC
+      MapPublicIpOnLaunch: true
+      Tags:
+        -
+          Key: version
+          Value: v0 # {{ version }}
+        -
+          Key: built_at
+          Value: 1007817 # {{ timestamp }}
+        -
+          Key: build_id
+          Value: {{ build_id }}
+  SSHSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SSH (22)
+      VpcId: !Ref {{ build_id }}CueAPIVPC
+      SecurityGroupIngress:
+        -
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+  {{ build_id }}CueAPISecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: GUI (443) or API (10101)
+      VpcId: !Ref {{ build_id }}CueAPIVPC
+      SecurityGroupIngress:
+        -
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          FromPort: 10101
+          ToPort: 10101
+          CidrIp: 0.0.0.0/0
+      Tags:
+        -
+          Key: version
+          Value: {{ version }}
+        -
+          Key: built_at
+          Value: {{ timestamp }}
+        -
+          Key: build_id
+          Value: {{ build_id }}
+  {{ build_id }}CueAPIInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        -
+          Key: version
+          Value: {{ version }}
+        -
+          Key: built_at
+          Value: {{ timestamp }}
+        -
+          Key: build_id
+          Value: {{ build_id }}
+  {{ build_id }}CueAPIVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref {{ build_id }}CueAPIInternetGateway
+      VpcId: !Ref {{ build_id }}CueAPIVPC
+  {{ build_id }}CueAPIRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref {{ build_id }}CueAPIVPC
+      Tags:
+        -
+          Key: version
+          Value: {{ version }}
+        -
+          Key: built_at
+          Value: {{ timestamp }}
+        -
+          Key: build_id
+          Value: {{ build_id }}
+  {{ build_id }}CueAPIRouteToInternet:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref {{ build_id }}CueAPIInternetGateway
+      RouteTableId: !Ref {{ build_id }}CueAPIRouteTable
+  {{ build_id }}CueAPISubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref {{ build_id }}CueAPIRouteTable
+      SubnetId: !Ref {{ build_id }}CueAPISubnet
+  {{ build_id }}CueAPIHostNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !GetAtt {{ build_id }}CueAPISecurityGroup.GroupId
+        -
+          !GetAtt SSHSG.GroupId
+      SubnetId: !Ref {{ build_id }}CueAPISubnet
+      PrivateIpAddress: 10.10.0.16
+      Tags:
+        -
+          Key: version
+          Value: {{ version }}
+        -
+          Key: built_at
+          Value: {{ timestamp }}
+        -
+          Key: build_id
+          Value: {{ build_id }} 
+  {{ build_id }}CueAPIHostxyz:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-cd0f5cb6
+      InstanceType: t2.small
+      KeyName: key0-cue-api-v0
+      NetworkInterfaces:
+        -
+          NetworkInterfaceId: !Ref {{ build_id }}CueAPIHostNetworkInterface
+          DeviceIndex: '0'
+      Tags:
+        -
+          Key: version
+          Value: {{ version }}
+        -
+          Key: built_at
+          Value: {{ timestamp }}
+        -
+          Key: build_id
+          Value: {{ build_id }}
+
+
+
+
+
