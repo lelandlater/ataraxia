@@ -1,3 +1,7 @@
+body {
+    margin: auto 0;
+}
+
 #top-container {
     display: flex;
     width: 100%;
@@ -43,6 +47,8 @@
 
 .footer-nav {
     justify-content: space-around;
+    margin-bottom: 20px;
+
 }
 
 .nav-horizontal-left-item {

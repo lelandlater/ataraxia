@@ -1,2 +1,2 @@
 #!/bin/bash
-systemctl start cue-gui
+sudo systemctl start cue-gui

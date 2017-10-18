@@ -26,19 +26,19 @@ class UserAPI(MethodView):
         resp = make_response(user._get_user_by_uid(uid))
         return resp
 
-    def post(self, uid):
-        """
-        :param: user Spotify unique identifier
-        """
-        resp=make_response(cue._get_user_by_suri(uid))        
-        resp.headers['Content-Type']='application/json'
-        resp.headers['Content-Length']=sys.getsizeof(resp)  
-        return resp
+    """
+    QUESTION different methods for query strings, or a sin
 
-    def post(self):
+    def post(self, uid): 
+        return make_response(cue._get_user_by_uid(uid))          
+
+    def post(self, uri):
+        return make_response(cue._get_user_by_suri(suri))
+
+    OR
+    """
+    def post(self, suri=None, uid=None):
         pass
-
-
 
 @v0.route('/events/<uuid:evid>/')
     """
