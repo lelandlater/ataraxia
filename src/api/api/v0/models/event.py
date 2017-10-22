@@ -1,7 +1,6 @@
 from cassandra.cqlengine.columns import Boolean, UUID, Map, \
     DateTime, TimeUUID, Integer
 from cassandra.cqlengine.models import Model
-from marshmallow import Schema, fields
 
 class Event(Model):
     """
@@ -15,12 +14,7 @@ class Event(Model):
     cid = UUID(required=True)
     pin = Integer()
     np = Text()
-    attendees = Setz(value_type=Map(key_type=UUID(),value_type=Text()), required=True)
+    attendees = Set(value_type=Map(key_type=UUID(),value_type=Text()), required=True)
     created_at = DateTime(required=True),
     ended_at = DateTime
     last_active = TimeUUID(required=True)
-
-class EventSchema(Schema):
-    evid=fields.Int(dump_only=True)
-    host=fields.Str()
-    pin=fields.Int()

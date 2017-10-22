@@ -2,14 +2,7 @@ import os
 import logging
 from flask import Flask
 
-log = logging.getLogger('cueapi')
-log.setLevel('DEBUG')
-handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
-log.addHandler(handler)
-
 def create_app(cfg=None):
-    log.info('Calling create_app()...')
     app = Flask(__name__)
     if cfg is not None:
         app.config.from_object(cfg)
@@ -34,3 +27,10 @@ def create_app(cfg=None):
 
     log.info('create_app() complete.') 
     return app
+
+"""
+QUESTION
+
+implementing the app factory, and adding Celery
+
+"""
