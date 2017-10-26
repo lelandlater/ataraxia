@@ -2,6 +2,8 @@ import os
 import logging
 from flask import Flask
 
+log = logging.getLogger('cueapi')
+
 def create_app(cfg=None):
     app = Flask(__name__)
     if cfg is not None:
