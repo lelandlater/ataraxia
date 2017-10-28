@@ -19,7 +19,7 @@ def contact():
 
 def info():
     items = [NavItem(url_for('index'), 'BACK')]
-    rendered_html = render_template('info.html', items=items, title='More informatioj')
+    rendered_html = render_template('info.html', items=items, title='More information')
     return make_response(html_minify(rendered_html), 200)
 
 def request_auth():

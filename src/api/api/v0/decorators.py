@@ -50,4 +50,8 @@ def admin(f):
                 #IMPLEMENT
                 print("This should be admin-only.")
                 return f(*args,**kwargs)
-            except 
+            except HTTPException as e:
+                pass
+            return
+        return admin
+    return decorator

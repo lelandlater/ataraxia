@@ -68,12 +68,12 @@ class CueUser:
         return False
 
     def _user_exists_with_suri(suri):
-    # IMPLEMENT
-    return False
+        #IMPLEMENT
+        return False
 
     def _user_exists_with_uid(uid):
-    # IMPLEMENT
-    return False
+        # IMPLEMENT
+        return False
 
     def _get_all_users():
         pass
