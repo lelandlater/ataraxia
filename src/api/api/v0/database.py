@@ -5,14 +5,6 @@ from .errors import CannotConnectToBackendError
     
 class CueAPIDatabase:
 
-    def __init__(self, endpt=None):
-        if endpt is not None:
-            self.endpt=endpt
-        else:
-            self.endpt='0.0.0.0'
-        cluster = Cluster([endpt])
-        _set_session(cluster.connect())
-
     def _set_session(self, new_sesh):
         """
         Connect a session to a db backend.
@@ -135,5 +127,10 @@ class CueAPIDatabase:
         # TODO write this for testing
         return True
 
-db = CueAPIDatabase() # app.config['CASSANDRA_HOST'] # PYTHON where can I app so session object is accessible 
-    
+    def __init__(self, endpt=None):
+        if endpt is not None:
+            self.endpt=endpt
+        else:
+            self.endpt='0.0.0.0'
+        cluster = Cluster(['cassandra'])
+        _set_session(cluster.connect())

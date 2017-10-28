@@ -9,7 +9,7 @@ def create_app(cfg=None):
     if cfg is not None:
         app.config.from_object(cfg)
     log.info('Beginning db setup...')
-    from .database import db
+    from .database import CueAPIDatabase
     log.debug('Creating database tables...')
     db._setupdb()
     log.debug('Database tables created.')

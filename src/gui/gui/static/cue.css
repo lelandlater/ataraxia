@@ -1,14 +1,15 @@
 .cue-logo {
 	font-family: 'Lato';
-	font-weight: 100;
+	font-weight: 800;
 	color: #5555ff;
 }
 
 .cue-text {
 	font-family: 'Lato';
-	font-weight: 700;
-  color: #5555ff;
+	font-weight: 100;
+  color: #451571;
   font-size: 6vw;
+  text-align: left;
 }
 
 .header-text {
@@ -18,20 +19,22 @@
 
 .body-text {
   display: flex;
-  font-family: 'Helvetica';
+  font-family: 'Cardo';
   font-size: 2vw;
   justify-content: flex-start;
   padding: 30px 12px 30px 20px;
-  color: #4444ff;
+  color: #451571;
 }
 
 .cue-gradient0 {
-  background: red; /* For browsers that do not support gradients */
-  background: -webkit-linear-gradient(left top, #a8e5b7, #ffb6b6); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(bottom right, #a8e5b7, #ffb6b6); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(bottom right, #a8e5b7, #ffb6b6); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(to bottom right, #a8e5b7, #ffb6b6); /* Standard syntax */
+  background: black; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(left top, #451571, #945EC7); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(bottom right, #451571, #945EC7); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(bottom right, #451571, #945EC7); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to bottom right, #451571, #945EC7); /* Standard syntax */
   width: 100%;
+  -webkit-filter: drop-shadow(0px 1px 5px rgba(0, 0, 0, .6));
+  filter: drop-shadow(0px 1px 5px rgba(0, 0, 0, .6));
 }
 
 .cue-gradient1 {
@@ -39,12 +42,17 @@
 }
 
 .cue-app-container {
-  
+  /*width: 92%;
+  margin-top: -35%;
+  padding-left: 8%;*/
 }
 .text-container {
-  padding-left: 24px;
-  height: 600px;
+  /*height: 600px;*/
   width: 100%;
+}
+
+.text-container p {
+  padding-left: 10%;
 }
 
 .cue-button {
@@ -54,4 +62,27 @@
   -moz-transition: all .35s ease 0s;
   -o-transition: all .35s ease 0s;
   transition: all .35s ease 0s;
+}
+
+.cue-inline-link {
+  text-decoration: none;
+}
+
+a:visited {
+  color: #451571;
+}
+
+.cue-inline-link :hover {
+  background-color: #945EC7;
+}
+
+.cue-inline-link a:visited,
+.cue-inline-link a:hover,
+.cue-inline-link a:active {
+  color: #451571;
+}
+
+.ataraxia-inline-logo {
+  font-family: 'GFS Didot';
+  font-size: 1.1em;
 }
