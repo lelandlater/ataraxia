@@ -2,28 +2,30 @@
 	font-family: 'Lato';
 	font-weight: 800;
 	color: #5555ff;
+  text-shadow: 2px 2px #ffff00;
 }
 
 .cue-text {
 	font-family: 'Lato';
 	font-weight: 100;
   color: #451571;
-  font-size: 6vw;
+  font-size: 3.4em;
   text-align: left;
 }
 
 .header-text {
-  padding: 30px 4px 12px 12px;
+  padding: 50px 4px 12px 12px;
   font-weight: 200;
 }
 
 .body-text {
   display: flex;
   font-family: 'Cardo';
-  font-size: 2vw;
+  font-size: 1.4em;
   justify-content: flex-start;
   padding: 30px 12px 30px 20px;
   color: #451571;
+  line-height: 1.5em;
 }
 
 .cue-gradient0 {
@@ -39,6 +41,10 @@
 
 .cue-gradient1 {
 
+}
+
+.strikethrough {
+  text-decoration-line: overline;
 }
 
 .cue-app-container {
@@ -69,17 +75,17 @@
 }
 
 a:visited {
-  color: #451571;
+  color: #5555ff;
 }
 
 .cue-inline-link :hover {
-  background-color: #945EC7;
+  background-color: #5555ff;
 }
 
 .cue-inline-link a:visited,
 .cue-inline-link a:hover,
 .cue-inline-link a:active {
-  color: #451571;
+  color: #5555ff;
 }
 
 .ataraxia-inline-logo {

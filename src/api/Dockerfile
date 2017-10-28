@@ -3,19 +3,21 @@ MAINTAINER LelandLater '<llater@ataraxia.io>'
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -y && \
-    apt-get install -y python2.7-minimal python-pip
+    apt-get install -y python2.7 python-pip build-essential python-dev
 
 RUN mkdir -p /etc/my_init.d/
-#COPY start_cueapi.sh /etc/my_init.d/start_cueapi.sh
-#RUN chmod +x /etc/my_init.d/start_cueapi.sh
+COPY start_cueapi.sh /etc/my_init.d/start_cueapi.sh
+RUN chmod +x /etc/my_init.d/start_cueapi.sh
 
-COPY . /home/ubuntu
-WORKDIR /home/ubuntu
+RUN mkdir /cueapi
+ADD requirements.txt /cueapi/requirements.txt
 RUN pip install uwsgi
 RUN pip install cassandra-driver
-RUN pip install -r requirements.txt
+RUN pip install -r /cueapi/requirements.txt
+COPY . /cueapi
 
-COPY cueapi.service /etc/systemd/system/cueapi.service
-RUN rm -f /etc/my_init.d/00_regen_ssh_host_keys.sh 
+RUN rm -f /etc/my_init.d/00_regen_ssh_host_keys.sh
+
 EXPOSE 10101
+
 CMD ["/sbin/my_init"]

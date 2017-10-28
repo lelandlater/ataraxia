@@ -67,6 +67,7 @@ class CueAPIDatabase:
                 host map<UUID, varchar>,,
                 name text,
                 cid UUID,
+                private boolean,
                 pin int,
                 np text,
                 attendees list<map<UUID, varchar>>,
@@ -120,9 +121,9 @@ class CueAPIDatabase:
         }
         self.prepared_statements = stmts
         
-    '''Testing functions, ie used in tests.'''
     def _populatedb(session):
-        # add users
+        """Populates the database with fudged data. Use in demo or testing."""
+        # add users 
         # add events
         # TODO write this for testing
         return True

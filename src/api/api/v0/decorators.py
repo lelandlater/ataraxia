@@ -1,5 +1,6 @@
 from functools import wraps
 from flask import g, request, make_response
+from werkzeug.exceptions import HTTPException
 from .errors import ClientAuthorizationError
 from .util import _authenticate_jwt
 
@@ -38,3 +39,15 @@ def auth(f):
         return authorize
     return decorator
 
+def admin(f):
+    """
+    Admin-only data.
+    """
+    def decorator(f):
+        @wraps(f):
+        def admin(*args,**kwargs):
+            try:
+                #IMPLEMENT
+                print("This should be admin-only.")
+                return f(*args,**kwargs)
+            except 

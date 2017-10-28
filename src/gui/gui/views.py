@@ -9,7 +9,7 @@ def index():
     nav = NavBar(start=[NavItem('http://google.com', 'API')])
     footer = NavBar(middle=[NavItem(url_for('contact'), 'CONTACT')])
     buttons = [NavItem(url_for('info'), 'INFO'), NavItem(url_for('request_auth'), 'AUTH CODE?')]
-    rendered_html = render_template('index.html', nav=nav, buttons=buttons, footer=footer, title='Cue: social playlist')
+    rendered_html = render_template('index.html', nav=nav, buttons=buttons, footer=footer, title='Cue, a social playlist')
     return make_response(html_minify(rendered_html), 200)
 
 def contact():
@@ -19,12 +19,12 @@ def contact():
 
 def info():
     items = [NavItem(url_for('index'), 'BACK')]
-    rendered_html = render_template('info.html', items=items, title='Contact Cue')
+    rendered_html = render_template('info.html', items=items, title='More informatioj')
     return make_response(html_minify(rendered_html), 200)
 
 def request_auth():
     items = [NavItem(url_for('index'), 'BACK')]
-    rendered_html = render_template('request_auth.html', items=items, title='Contact Cue')
+    rendered_html = render_template('request_auth.html', items=items, title='Authorization')
     return make_response(html_minify(rendered_html), 200)
 
 def access():

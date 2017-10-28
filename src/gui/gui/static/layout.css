@@ -97,11 +97,11 @@ body {
     padding: 4px 8px;
     text-decoration: none;
     font-style: none;
-    color: #4444ff;
+    color: #5555ff;
 }
 
 .simple-link-button a:visited {
-    color: #4444ff;
+    color: #5555ff;
 }
 
 .list-vertical {
@@ -124,7 +124,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18vw;
+    font-size: 14em;
     padding-top: 8vh;
     margin-left: auto;
     margin-right: auto;

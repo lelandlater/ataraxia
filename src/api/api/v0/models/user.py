@@ -1,25 +1,38 @@
 from cassandra.cqlengine.columns import Text, Boolean, UUID, \
     DateTime
 from cassandra.cqlengine.models import Model
-from marshmallow import Schema, fields
+from flask-restful import Resource
 from ..database import db
+from ..decorators import 
 from ..errors import CueAPIResourceCreationError
-from ..util import 
 
 class CueUser:
-    class UserBySuri(Model):
+    """Representations and utlities of a Cue user."""
+    
+    class UserBySuriModel(Model):
+        """Cassandra data model for user table with Spotify URI as partition key."""
         suri = Text(primary_key=True)
         uid = UUID()
         active = Boolean()
         name = Text()
         joined_at = DateTime()
 
-    class UserByUid(Model):
+    class UserByUidModel(Model):
+        """Cassandra data model for user table with Cue user id as primary key."""
         uid = UUID(primary_key=True)
         suri = Text()
         active = Boolean()
         name = Text()
         joined_at = DateTime()
+
+    class UserDataFields(object):
+         """Fields representing formatted output data from flask-restful 'Resource'."""
+        user_data_fields = {
+            'uid' = fields.String,
+            'suri'= fields.String,
+            'name' = fields.String,
+            'active' = fields.Boolean
+        }
 
     def _generate_auth_token(uid):
         """
@@ -81,16 +94,25 @@ class CueUser:
     return 0
     """
 
-    # formatting
-    class UserSchema(Schema):
-        uid=fields.Int(dump_only=True)
-        suri=fields.Str()
-        name=fields.Str()
-        active=fields.Bool()
-        host=fields.Bool()
-        evid=fields.Int(dump_only=True)
+    class UserAPI(Resource):
+        """flask-restful resource: HTTP methods interacting with backend.
+
+        AKA "The Python API"
+
+        """
+        decorators=[decorators.api,decorators.auth]
+
+        def get(self):
+            """
+            Return all Cue users.
+            """
+            resp.set_data(_get_all_users())
 
 
-
-
+        def get(self, inp):
+            """
+            :param: user UUID
+            """
+            resp = make_response(_get_user_by_uid(uid))
+            return resp
 
