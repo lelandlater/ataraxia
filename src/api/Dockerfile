@@ -3,7 +3,7 @@ MAINTAINER LelandLater '<llater@ataraxia.io>'
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -y && \
-    apt-get install -y python2.7 python-pip build-essential python-dev
+    apt-get install -y python2.7 python-pip build-essential python-dev libpcre3 libpcre3-dev
 
 RUN mkdir -p /etc/my_init.d/
 COPY start_cueapi.sh /etc/my_init.d/start_cueapi.sh

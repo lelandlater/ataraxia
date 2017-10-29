@@ -1,2 +1,2 @@
 #!/bin/bash
-uwsgi --ini uwsgi.ini
+uwsgi --ini /cueapi/uwsgi.ini
