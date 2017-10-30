@@ -41,7 +41,7 @@ services:
       context: ./openresty
       dockerfile: Dockerfile-acquire-certs
     ports:
-      - 8080:80
+      - 80:8080
       - 443:443
     environment:
       - JWT_SECRET=""
@@ -68,7 +68,7 @@ services:
     volumes:
       - certs:/etc/letsencrypt
       - certs_data:/data/letsencrypt
-    command: "certonly --webroot --webroot-path=/ --renew-by-default -d cue.zone --email lelandlater@gmail.com --agree-tos --no-eff-email --non-interactive"
+    command: "certonly --webroot --webroot-path=/data/letsencrypt --renew-by-default -d cue.zone --email lelandlater@gmail.com --agree-tos --no-eff-email --non-interactive"
 volumes:
   redis:
   cassandra:
