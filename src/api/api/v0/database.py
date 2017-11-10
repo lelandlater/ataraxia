@@ -3,7 +3,18 @@ from cassandra.query import ordered_dict_factory
 from . import log
 from .errors import CannotConnectToBackendError
     
-class CueAPIDatabase:
+class CueAPIDatabase(object):
+    """
+    Database abstraction.
+    """
+
+    def __init__(self, endpt=None):
+        if endpt is not None:
+            self.endpt=endpt
+        else:
+            self.endpt='0.0.0.0'
+        cluster = Cluster(['cassandra'])
+        self._set_session(cluster.connect())
 
     def _set_session(self, new_sesh):
         """
@@ -100,7 +111,7 @@ class CueAPIDatabase:
         log.info('Preparing statements.')
         create_event=self.session.prepare("INSERT INTO events (evid, host) VALUES (?, ?)")
         create_cue=self.session.prepare("INSERT INTO cues (cid, evid) VALUES (?, ?)")
-        get_user_by_suri=self.session.prepare("SELECT * FROM users_by_suri WHERE suri=?")
+        get_user_by_suri=self.session.prepare("SELECT *  FROM users_by_suri WHERE suri=?")
         get_user_by_uid=self.session.prepare("SELECT * FROM users_by_uid WHERE uid=?")
         get_events=self.session.prepare("SELECT (evid, name, created_at) FROM events")
         get_event_by_evid=session.prepare("SELECT * FROM events WHERE evid=?")
@@ -128,10 +139,4 @@ class CueAPIDatabase:
         # TODO write this for testing
         return True
 
-    def __init__(self, endpt=None):
-        if endpt is not None:
-            self.endpt=endpt
-        else:
-            self.endpt='0.0.0.0'
-        cluster = Cluster(['cassandra'])
-        _set_session(cluster.connect())
+    
