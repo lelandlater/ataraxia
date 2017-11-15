@@ -1,20 +1,23 @@
+import logging
 from cassandra.cluster import Cluster, Session
 from cassandra.query import ordered_dict_factory
-from . import log
-from .errors import CannotConnectToBackendError
-    
+from .errors import *
+
+log = logging.getLogger('cueapi.database')
+
 class CueAPIDatabase(object):
     """
     Database abstraction.
     """
 
-    def __init__(self, endpt=None):
-        if endpt is not None:
-            self.endpt=endpt
+    def __init__(self, host=None):
+        if host is not None:
+            self.host=host
         else:
-            self.endpt='0.0.0.0'
-        cluster = Cluster(['cassandra'])
+            self.host='127.0.0.1'
+        cluster = Cluster([host])
         self._set_session(cluster.connect())
+        return 0
 
     def _set_session(self, new_sesh):
         """
@@ -23,8 +26,8 @@ class CueAPIDatabase(object):
         """
         log.warn('Atempting to reset the session.')
         if isinstance(new_sesh, Session):
-            # other checks ? ie part of same cluster ?
             self.session = new_sesh
+            return 0
         else:
             raise CannotConnectToBackendError
 
@@ -34,12 +37,21 @@ class CueAPIDatabase(object):
         """
         return self.session
 
+    def _retrieve_prepared_statement(self, statement):
+        """
+        Retrieve a prepared statement.
+        err: 172
+        """
+        if statement not in self.prepared_statements:
+            raise StatementNotPreparedError("Did not pre-prepare statement for execution.")
+        return self.prepared_statements[statement]
+
     def _disconnect_session(self):
         """
         End the session.
         """
         self.session.close()
-        return True
+        return 0
 
     def _setupdb(self):
         """
@@ -91,7 +103,7 @@ class CueAPIDatabase(object):
         log.info('Created v0.events table.')
         self.session.execute("""
             CREATE_TABLE IF NOT EXISTS v0.cues (
-                cid UUID ,
+                cid UUID,
                 evid UUID,
                 next text,
                 nextnext text,
@@ -103,18 +115,17 @@ class CueAPIDatabase(object):
         log.info('Created v0.cues table.')
         log.info('v0 keyspace and cue tables created.')
 
+
     def _prepare_statements(self):
         """
-        If you use a statement more than once, prepare it.
+        Statements used more than once.
         """
-        # can I do this in a better way?
         log.info('Preparing statements.')
         create_event=self.session.prepare("INSERT INTO events (evid, host) VALUES (?, ?)")
         create_cue=self.session.prepare("INSERT INTO cues (cid, evid) VALUES (?, ?)")
-        get_user_by_suri=self.session.prepare("SELECT *  FROM users_by_suri WHERE suri=?")
-        get_user_by_uid=self.session.prepare("SELECT * FROM users_by_uid WHERE uid=?")
-        get_events=self.session.prepare("SELECT (evid, name, created_at) FROM events")
-        get_event_by_evid=session.prepare("SELECT * FROM events WHERE evid=?")
+        get_user_by_suri=self.session.prepare("SELECT (uid, suri, name, active) FROM users_by_suri WHERE suri=?")
+        get_user_by_uid=self.session.prepare("SELECT (uid, suri, name, active) FROM users_by_uid WHERE uid=?")
+        get_event_by_evid=session.prepare("SELECT (evid, host, name, cid, np, attendees, private) FROM events WHERE evid=?")
         get_cid_by_evid=session.prepare("SELECT (cid) FROM events WHERE evid=?")
         get_curr_track_by_evid=session.prepare("SELECT (curr_track) FROM events WHERE evid=?")
         get_next_track_by_cid=session.prepare("SELECT (next) FROM cues WHERE cid=?")
@@ -124,7 +135,6 @@ class CueAPIDatabase(object):
             'create_cue': create_cue,
             'get_user_by_suri': get_user_by_suri,
             'get_user_by_uid': get_user_by_uid,
-            'get_events': get_events,
             'get_event_by_evid': get_event_by_evid,
             'get_cid_by_evid': get_cid_by_evid,
             'get_curr_track_by_evid': get_curr_track_by_evid,
@@ -132,11 +142,23 @@ class CueAPIDatabase(object):
         }
         self.prepared_statements = stmts
         
-    def _populatedb(session):
+    def _populate_with_test_data(self):
         """Populates the database with fudged data. Use in demo or testing."""
-        # add users 
-        # add events
-        # TODO write this for testing
-        return True
+        log.warn('Populating the database with test data.')
+        
+        pass
 
-    
+    def _populate_with_demo_data(self):
+        log.warn('Populating the database with demo data.')
+
+
+    def _run_query(self, statement):
+        """Execute non-prepared query."""
+        log.debug('Executing a non-prepared query:\n{0}'.format(statement))
+        try:
+            self.session.execute(statement)
+            return 0
+        except BadQueryError as e:
+            log.error("Bad query against Cassandra!")
+            exit(e)
+

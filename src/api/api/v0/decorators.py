@@ -2,14 +2,13 @@ from functools import wraps
 from flask import g, request, make_response
 from werkzeug.exceptions import HTTPException
 from .errors import ClientAuthorizationError
-from .util import _authenticate_jwt
 
 def api(f):
     """
     Adds response headers to endpoints.
     """
     def decorator(f):
-        @wraps(f):
+        @wraps(f)
         def endpt(*args,**kwargs):
             resp = make_response(f(*args,**kwargs))
             resp.headers['Content-Type'] = 'application/json'
@@ -17,13 +16,13 @@ def api(f):
             return resp
         return endpt
     return decorator
-
+"""
 def auth(f):
-    """
+    '''
     JWT validation.
-    """
+    '''
     def decorator(f):
-        @wraps(f):
+        @wraps(f)
         def authorize(*args,**kwargs):
             try:
                 token=request.values.get('jwt')
@@ -38,13 +37,13 @@ def auth(f):
             return resp
         return authorize
     return decorator
-
+"""
 def admin(f):
     """
     Admin-only data.
     """
     def decorator(f):
-        @wraps(f):
+        @wraps(f)
         def admin(*args,**kwargs):
             try:
                 #IMPLEMENT

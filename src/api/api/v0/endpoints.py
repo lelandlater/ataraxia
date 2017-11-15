@@ -1,16 +1,15 @@
 import sys
-from models import cue, event, user
-from flask import add_url_rule, redirect, make_response, url_for, request
-from flask-restful import Resource, fields, marshal_with
-
-from . import decorators.api,decorators.auth
+from flask import Blueprint, redirect
+from flask_restful import Api
+from models import user, event, cue
 
 v0 = Blueprint('v0', __name__, url_prefix='/v0')
+api = Api(v0)
 
 def index():
     return redirect("https://docs.cue.zone/api", code=301)
-
-v0.add_url_rule('/', index)
-
-
-
+    
+v0.add_url_rule('/', 'index', index)
+api.add_resource(user.UserAPI, '/users', '/users/<uuid:uid>')
+api.add_resource(event.EventAPI, '/events', '/events/<uuid:evid>')
+api.add_resource(cue.CueAPI, '/cues', '/cues/<uuid:cid>')
