@@ -11,7 +11,6 @@ RUN chmod +x /etc/my_init.d/start_cuegui.sh
 
 RUN mkdir /cuegui
 ADD requirements.txt /cuegui/requirements.txt
-RUN pip install uwsgi
 RUN pip install -r /cuegui/requirements.txt
  
 COPY . /cuegui

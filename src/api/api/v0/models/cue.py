@@ -8,7 +8,7 @@ from cassandra.cqlengine.models import Model
 from flask_restful import Resource, fields
 
 log = logging.getLogger('cue-api.cue')
-connection.setup(['cassandra']), "cqlengine", protocol_version=3)
+connection.setup(['db'], "cqlengine", protocol_version=3)
 
 class CueModel(Model):
     """

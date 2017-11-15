@@ -1,11 +1,11 @@
-version: '3.1'
+version: '3.3'
 services:
   gui:
     container_name: gui0
     restart: always
     build: ./gui
-    expose:
-      - 9000
+    ports:
+      - 9000:9000
     links:
       - api
     volumes:
@@ -14,34 +14,34 @@ services:
     container_name: api0
     restart: always
     build: ./api
-    expose:
-      - 10101
+    ports:
+      - 10101:10101
     links:
       - cassandra:db
-      - redis:cache
+      #- redis:cache
   cassandra:
     image: cassandra
     container_name: cassandra0
     ports:
-     - 9042:9042
-     - 7199
+       - 9042:9042
+       - 7199
     volumes:
       - cassandra:/var/lib/cassandra
-  redis:
-    image: redis:3.0-alpine
-    container_name: redis0
-    command: redis-server --requirepass this-is-a-secret
-    ports:
-      - 6379:6379
-    volumes:
-      - redis:/data
+  #redis:
+  #  image: redis:3.0-alpine
+  #  container_name: redis0
+  #  command: redis-server --requirepass this-is-a-secret
+  #  ports:
+  #    - 6379:6379
+  #  volumes:
+  #    - redis:/data
   openresty-acq:
     container_name: acquire_certs
     build:
       context: ./openresty
-      dockerfile: Dockerfile-acquire-certs
+      dockerfile: Dockerfile-acq
     ports:
-      - 80:8080
+      - 80:80
       - 443:443
     environment:
       - JWT_SECRET=""
@@ -62,16 +62,16 @@ services:
   #    - certs:/etc/letsencrypt
   #    - certs_data:/data/letsencrypt
   #   - static:/static
-  letsencrypt:
-    container_name: letsencrypt0
-    image: deliverous/certbot
-    volumes:
-      - certs:/etc/letsencrypt
-      - certs_data:/data/letsencrypt
-    command: "certonly --webroot --webroot-path=/data/letsencrypt --renew-by-default -d cue.zone --email lelandlater@gmail.com --agree-tos --no-eff-email --non-interactive"
+ # letsencrypt:
+ #   container_name: letsencrypt0
+ #   image: deliverous/certbot
+ #   volumes:
+ #     - certs:/etc/letsencrypt
+ #     - certs_data:/data/letsencrypt
+ #:   command: "certonly --webroot --webroot-path=/data/letsencrypt --renew-by-default -d cue.zone --email lelandlater@gmail.com --agree-tos --no-eff-email --non-interactive"
 volumes:
-  redis:
   cassandra:
   certs:
   certs_data:
   static:
+  #redis:

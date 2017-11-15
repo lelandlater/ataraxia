@@ -24,7 +24,6 @@ def create_app(cfg=None):
     if app.config["DEMO"]:
         db._populate_with_demo_data()
     log.debug('Creating database tables...')
-    db.
     log.debug('Database tables created.')
     log.debug('Preparing statements...')
     #db._prepare_statements()
