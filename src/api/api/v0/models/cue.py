@@ -37,6 +37,14 @@ class CueDataFields:
 Cue management functions.
 """
 
+def _retrieve_cue(cid):
+    """Retrieve a cue by its cid."""
+    pass
+
+def insert_track_into_cue(track_uri, cid):
+    """Insert a track into a Cue."""
+    # check if uri is already on the Cue
+
 class CueAPI(Resource):
     """
     From Flask-Restful, a REST API for cue table.

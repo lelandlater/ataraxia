@@ -1,12 +1,14 @@
 import logging
+import re
 from api.v0.decorators import api
 from api.v0 import db
-from api.v0.errors import *
+from api.v0.util import validate_uuid
+from api.v0.errors import UserDoesNotExist, CueAPIResourceRetrievalError
 from cassandra.cqlengine import columns as cql
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.models import Model
 from flask import make_response
-from flask_restful import fields, Resource
+from flask-restful import fields, Resource
 
 log = logging.getLogger('cue-api.user')
 connection.setup(['cassandra']), "cqlengine", protocol_version=3)
@@ -35,7 +37,7 @@ class UserDataFields:
         'name': fields.String, 
         'active': fields.Boolean
     }
-def _validate_suri_regex():
+def _valid_suri_regex(suri):
     """
     Validate the Spotify unique identifier as belonging to a user.
 
@@ -57,7 +59,12 @@ def _valid_uid_regex(uid):
 
 def _user_exists_with_suri(suri):
     #IMPLEMENT
-    return False
+
+    if not _valid_suri_regex(suri):
+        raise CueAPIResourceRetrievalError("Improperly formatted uid called on /user")
+    if not _user_exists_with_suri(suri):
+        raise UserDoesNotExist("No")
+    return True
 
  def _user_exists_with_uid(uid):
     # IMPLEMENT
@@ -75,19 +82,18 @@ def _user_exists_with_suri(suri):
       """
       decorators=[api]    
 
-     def get(self, uid):
+     def get(self, uid=None):
           """
           :param: user UUID
           """
-          # sanitize input
-          log.debug('Retrieving a user with uid {0}'.format(uid))
-          if not _valid_uid_regex(uid):
-              raise CueAPIResourceRetrievalError("Improperly formated uid called on /user")
-          if not _user_exists_with_uid(uid):
-              raise UserDoesNotExist("No")    
+        log.debug('Retrieving a user with uid {0}'.format(uid))
+        if not _user_exists_with_uid(uid):
+            raise CueAPIResourceRetrievalError("Could not retrieve /user with uid ".format(uid))
+        pass
+
   
      def put(self, uid):
-        pass    
+         pass
 
-    def options(self):
-        pass
+     def options(self):
+         pass
