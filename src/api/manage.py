@@ -2,7 +2,7 @@ import logging
 from api.v0 import create_app
 from api.v0.models.user import UserBySuriModel, UserByUidModel
 from api.v0.models.event import EventModel
-from api.v0,mdoels.cue import CueModel
+from api.v0.models.cue import CueModel
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.management import sync_table
 from config import config
