@@ -7,7 +7,7 @@ from cassandra.cqlengine.models import Model
 from flask_restful import Resource, fields
 
 log = logging.getLogger('cue-api.event')
-connection.setup(['cassandra']), "cqlengine", protocol_version=3)
+connection.setup(['cassandra']), 'v0', protocol_version=3)
 
 class EventModel(Model):
     """
@@ -51,7 +51,14 @@ class EventData(object):
 def _retrieve_event_with_evid(evid):
     return -1
 
+def _add_user_to_event(evid, uid):
+    pass
 
+def _remove_user_from_event(evid):
+    pass
+
+def _end_event(evid):
+    pass
 
 class EventAPI(Resource):
     """
@@ -69,3 +76,5 @@ class EventAPI(Resource):
     def put(self, evid):
         pass
 
+    def options(self, evid):
+        pass

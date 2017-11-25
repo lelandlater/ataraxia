@@ -1,15 +1,14 @@
-import logging
-import re, json
+import logging, re, json, time
 from api.v0.decorators import api
 from api.v0 import db
 from api.v0.util import validate_uuid
-from api.v0.errors import UserDoesNotExist, CueAPIResourceRetrievalError
+from api.v0.errors import CueAPIResourceRetrievalError
 from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.query import DoesNotExist, MultipleObjectsReturned
 from cassandra.cqlengine.models import Model
 from flask import make_response
-from flask_restful import fields, Resource
+from flask_restful import fields, Resource, marshal_with
 
 log = logging.getLogger('cue-api.user')
 connection.setup(['cassandra'], 'v0', protocol_version=3)
@@ -38,44 +37,40 @@ class UserDataFields:
         'name': fields.String, 
         'active': fields.Boolean
     }
-def _valid_suri_regex(suri):
-    """
-    Validate the Spotify unique identifier as belonging to a user.
-
-    :return: boolean TODO what is a valid suri? check spotify
-    """
-    res=re.match('[a-z0-9][a-z0-9-]{0,31}:', suri)
-    #IMPLEMENT
-    if res:
-      return True
-    return False
-
-def _valid_uid_regex(uid):
-    """
-    Ensure uid is valid regex.
-
-    :return: bool
-    """
-    return util.validate_uuid(uid)
 
 def _user_exists_with_suri(suri):
+    """
+    :param suri, a Spotify user resource identifier
+    :return boolean
+    """
     if not _valid_suri_regex(suri):
-        raise CueAPIResourceRetrievalError("Improperly formatted uid called on /user")
-    if _retrieve_user_with_suri(suri) is None:
-        raise UserDoesNotExist("No")
-    return True
-
-def _retrieve_all_users():
-    return UserByUid.ob
+        raise CueAPIResourceRetrievalError("Invalid URI called on /user")
 
 def _retrieve_user_with_uid(uid):
-    return -1
+    """
+    :cql #DO
+    :param uid, a Cue user id
+    :return user, returned as a cqlengine Model (None if not found)
+    """
+    if not util.validate_uuid(uid):
+        raise CueAPIResourceRetrievalError("Invalid UUID called on /user")
+    try:
+        user = UserByUid.get(uid=uid)
+    except DoesNotExist as e:
+        log.info("user with suri {} does not exist".format(suri))
+        log.error(e)
+        user = None
+    except MultipleObjectsReturned as e:
+        log.info("more than one user exists with suri {}".format(suri))
+        log.error(e)
+        user = None
+    return user
 
 def _retrieve_user_with_suri(suri):
     """
     :cql SELECT * FROM user_by_suri WHERE suri = ? values (suri) or something...
     :param suri, a Spotify user resource identifier
-    :return user, returned as a cqlengine Model
+    :return user, returned as a cqlengine Model (None if not found)
     """
     try:
         user = UserBySuri.get(suri=suri)
@@ -89,12 +84,16 @@ def _retrieve_user_with_suri(suri):
         user = None
     return user
 
+
+
+
 class UserAPI(Resource):
     """
     From Flask-Restful, a REST API for user table.
     """
     decorators=[api]
 
+    @marshal_with(UserDataFields.user_data_fields)
     def get(self, uid):
         """
         :param uid, a CueUser uuid
@@ -108,8 +107,18 @@ class UserAPI(Resource):
         # marshal user
         return json.loads(user)
 
-     def put(self, uid):
-         pass
+    def post(self):
+        """
 
-     def options(self):
-         pass
+        """
+        pass
+
+    def put(self, uid):
+        """
+        - check if user exists
+        - if so, alter the data fields as described in request.data
+        - if not, and the requesite 
+        """
+
+    def options(self):
+        pass

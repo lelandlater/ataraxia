@@ -54,11 +54,6 @@ class CueAPIResourceRetrievalError(Error):
         self.code=code
         log.error("Error retrieiving a resource, probably with a GET request.")
 
-class UserDoesNotExist(CueAPIResourceRetrievalError):
-    def __init__(self, message, code=34):
-        super(Error, self).__init__(message)
-        self.code=code
-
 class JWTCreationError(Error):
     def __init__(self, message, code=41):
         super(Error, self).__init__(message)

@@ -6,7 +6,7 @@ from cassandra.cqlengine.management import sync_table
 from .errors import *
 
 log = logging.getLogger('cueapi.database')
-connection
+connection.setup(['cassandra'], 'v0', protocol_version=3)
 
 class CueAPIDatabase(object):
     """
@@ -22,7 +22,7 @@ class CueAPIDatabase(object):
         """
         log.info('Created v0.cues table')
         log.info('v0 keyspace and cue tables created')
-        pass
+        
 
     def _populate_with_test_data(self):
         """Populates the database with edge case data. Use in testing."""
@@ -37,4 +37,4 @@ class CueAPIDatabase(object):
         pass
 
     def _sync_table(self, tablename):
-        return s
+        return sync_table(tablename)

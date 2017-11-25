@@ -22,12 +22,7 @@ def info():
     rendered_html = render_template('info.html', items=items, title='More information')
     return make_response(html_minify(rendered_html), 200)
 
-def request_auth():
+def display_login_with_spotify():
     items = [NavItem(url_for('index'), 'BACK')]
-    rendered_html = render_template('request_auth.html', items=items, title='Authorization')
-    return make_response(html_minify(rendered_html), 200)
-
-def access():
-    items = [NavItem(url_for('index'), 'BACK')]
-    rendered_html = render_template('access.html', items=items, title='Contact Cue')
+    rendered_html = render_template('login_with_spotify.html', items=items, title='Contact Cue')
     return make_response(html_minify(rendered_html), 200)

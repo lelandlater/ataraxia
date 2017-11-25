@@ -2,25 +2,40 @@ import collections
 import typing
 import logging
 from api.v0.decorators import api
-from cassandra.cqlengine import columns as cql
+from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.models import Model
 from flask_restful import Resource, fields
 
 log = logging.getLogger('cue-api.cue')
-connection.setup(['db'], "cqlengine", protocol_version=3)
+connection.setup(['cassandra'], 'v0', protocol_version=3)
+
+Traq = collections.namedtuple('Traq', ['suri', 'P']) # add more variable
+DynaQ = typing.List[Traq]
 
 class CueModel(Model):
     """
     Each event has one and only one cue.
     This model interfaces with the Cassandra session.
     """
-    cid = cql.UUID(primary_key=True, required=True, default=uuid.uuid4)
-    evid = cql.UUID(required=True),
-    next = cql.Text()
-    nextnext = cql.Text()
-    queue = cql.List(value_type=cql.Map(key_type=cql.Text(),value_type=cql.Double()), required=True)
-    calibrated = cql.Boolean()
+    cid = columns.UUID(primary_key=True, required=True, default=uuid.uuid4)
+    evid = columns.UUID(required=True),
+    next = columns.Text()
+    nextnext = columns.Text()
+    queue = columns.List(value_type=columns.Map(key_type=columns.Text(),value_type=columns.Double()), required=True)
+    calibrated = columns.Boolean()
+
+class Queue(fields.Raw):
+    """Ordered list of upcoming sets."""
+    def format(self, dynaq):
+        """
+        :param DynaQ
+        :return formatted DynaQ
+        """
+        res={}
+        for traq in dynaq:
+            res.update(traq[0], traq[1])
+        return res
 
 class CueDataFields:
     """Fields representing formatted output data from flask-restful 'Resource'."""
@@ -30,20 +45,25 @@ class CueDataFields:
         'next': fields.String,
         'nextnext': fields.String,
         'private': fields.Boolean,
-        'np': fields.String
+        'np': fields.String,
+        'queue': Queue
     }
 
-"""
-Cue management functions.
-"""
+"""Cue API functions."""
 
 def _retrieve_cue(cid):
-    """Retrieve a cue by its cid."""
     pass
 
-def insert_track_into_cue(track_uri, cid):
-    """Insert a track into a Cue."""
-    # check if uri is already on the Cue
+def _update_cue(cid):
+    """
+    Alter values of a Cue with application logic.
+    An empty string sets value to null; None leaves field unchanged.
+
+    Fields that cannot be altered:
+    - evid (cid associated at event creation)
+    - created
+    """
+    pass
 
 class CueAPI(Resource):
     """
@@ -52,6 +72,7 @@ class CueAPI(Resource):
     """
     decorators=[api]
 
+    @marshal_with
     def get(self, cid):
         return '{"Hello."}'
 
@@ -60,7 +81,3 @@ class CueAPI(Resource):
 
     def options(self):
         pass
-
-
-Traq = collections.namedtuple('Traq', ['suri', 'P'])
-DynaQ = typing.List[Traq]
