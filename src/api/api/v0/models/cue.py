@@ -1,19 +1,28 @@
 import collections
 import typing
-import logging
+import logging, json
+
+import api.v0.util
+
 from api.v0.decorators import api
-from cassandra.cqlengine import columns
-from cassandra.cqlengine import connection
+from api.v0.errors import CueAPIResourceRetrievalError, \
+                          CueAPIResourceCreationError, \
+                          CueAPIRequestError
+from cassandra.cqlengine import columns, connection
 from cassandra.cqlengine.models import Model
-from flask_restful import Resource, fields
+from cassandra.cqlengine.query import DoesNotExist, \
+                                      MultipleObjectsReturned, \
+                                      LWTException
+from flask import make_response
+from flask_restful import Resource, fields, marshal
 
 log = logging.getLogger('cue-api.cue')
 connection.setup(['cassandra'], 'v0', protocol_version=3)
 
-Traq = collections.namedtuple('Traq', ['suri', 'P']) # add more variable
+Traq = collections.namedtuple('Traq', ['suri', 'P']) #DO
 DynaQ = typing.List[Traq]
 
-class CueModel(Model):
+class Cue(Model):
     """
     Each event has one and only one cue.
     This model interfaces with the Cassandra session.
@@ -49,19 +58,30 @@ class CueDataFields:
         'queue': Queue
     }
 
-"""Cue API functions."""
-
 def _retrieve_cue(cid):
-    pass
+    """
+    :param uuid, a Cue cue id
+    :return cqlengine.models.Model or None
+    """
+    if not util.validate_uuid(cid):
+        log.error("{} is not a valid uuid".format(cid))
+        raise CueAPIResourceRetrievalError("invalid uuid called on /cue")
+    return json.loads({'cue': "this is a cue"})
+
+def _create_cue(evid):
+    """
+    :param uuid, a Cue event id 
+    :return cqlengine.models.Model or None
+    """
+    if not util.validate_uuid(evid):
+        raise CueAPIResourceCreationError("invalid uuid called on /event")
+    try:
+        Cue.if_not_exists().create
 
 def _update_cue(cid):
     """
-    Alter values of a Cue with application logic.
-    An empty string sets value to null; None leaves field unchanged.
-
-    Fields that cannot be altered:
-    - evid (cid associated at event creation)
-    - created
+    :param uuid, a Cue cue id
+    :return cqlengine.models.Model or None
     """
     pass
 
@@ -72,12 +92,22 @@ class CueAPI(Resource):
     """
     decorators=[api]
 
-    @marshal_with
     def get(self, cid):
-        return '{"Hello."}'
+        return json.loads('{"Hello."}')
 
-    def put(self, cid):
+    def post(self, **kwargs):
+        """
+        Create a new cue
+        """
+        pass
+
+    def put(self, cid, **kwargs):
         pass
 
     def options(self):
-        pass
+        """
+        Describe API fucntionality
+        """
+        r = make_response()
+        r.headers['Allow'] = "['GET', 'POST', 'PUT', 'OPTIONS']"
+        return r

@@ -1,12 +1,20 @@
-import base64
+import base64, re
 #import m2crypto
 import uuid
 
+from flask_restful import fields
+
 """
-Functions with use in multiple components of the app.
+Utility methods and classes shared APIs.
 """
 
-def generate_id(num_bytes=16):
+class CueUser(fields.Raw):
+    """Represents a Cue user as Flask-Restful field."""
+    #DO
+    def format(self, uid, suri):
+        return "({0}, {1})".format(sui, uid)
+        
+def generate_uuid(num_bytes=16):
     #return base64.b64encode(m2crypto.m2.rand_bytes(num_bytes))
     return uuid.uuid4()
 

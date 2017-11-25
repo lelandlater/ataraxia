@@ -1,64 +1,81 @@
 import logging
+
+import api.v0.util
+
 from api.v0.decorators import api
-from api.v0 import db
-from cassandra.cqlengine import columns as cql
+from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.models import Model
-from flask_restful import Resource, fields
+
+from flask import make_response
+from flask_restful import Resource, fields, marshal
 
 log = logging.getLogger('cue-api.event')
 connection.setup(['cassandra']), 'v0', protocol_version=3)
 
-class EventModel(Model):
+class Event(Model):
     """
-    Cassandra data model for event table.
-
     Each event has exactly one host and exactly one cue.
     Each each event has a set of users (attendees) unique amongst all users.
-    This model interfaces with the Cassandra session by creating objects in Python.
     """
-    evid = cql.UUID(primary_key=True, required=True, default=uuid.uuid4)
-    host = cql.UUID(required=True)
-    name = cql.Text()
-    cid = cql.UUID(required=True)
-    pin = cql.Integer()
-    np = cql.Text()
-    attendees = cql.Set(value_type=cql.UUID(), required=True)
-    created_at = cql.DateTime(required=True),
-    ended_at = cql.DateTime()
-    last_active = cql.TimeUUID(required=True)
+    evid = columns.UUID(primary_key=True, required=True, default=uuid.uuid4)
+    host = columns.UUID(required=True)
+    name = columns.Text()
+    cid = columns.UUID(required=True)
+    secured = columns.Boolean(required=True)
+    pin = columns.Integer()
+    np = columns.Text()
+    attendees = columns.Set(value_type=columns.UUID(), required=True)
+    created_at = columns.DateTime(required=True)
+    ended_at = columns.DateTime()
+    last_active = columns.TimeUUID(required=True)
 
-class CueUserDataField(fields.Raw):
-    """Represents a Cue user as Flask-Restful field."""
-    def format(self, uid, suri):
-        return "({0}, {1})".format(sui, uid)
+event_fields = {
+    'evid': fields.String,
+    'host': util.CueUser(),
+    'name': fields.String,
+    'cid': fields.String,
+    'np': fields.String,
+    'attendees': fields.List(CueUserDataField()),
+    'private': fields.Boolean,
+    'pin': fields.String,
+    'created_at': fields.String,
+    'last_active': fields.String
+}
 
-class EventData(object):
-    """Returned event data from query."""
-    event_data_fields = {
-        'evid': fields.String,
-        'host': CueUserDataField(),
-        'name': fields.String,
-        'cid': fields.String,
-        'np': fields.String,
-        'attendees': fields.List(CueUserDataField()),
-        'private': fields.Boolean,
-        'pin': fields.String,
-        'created_at': fields.String,
-        'last_active': fields.String
-    }
+def _retrieve_event(evid):
+    """
+    :param uuid, a Cue event id
+    :return cqlengine.models.Model or None
+    """
+    if not util.validate_uuid(evid):
+        raise CueAPIRetrievalError("invalid uuid called on /event")
+    try:
+        event = Event.get(evid=evid)
+    except DoesNotExist as e:
+        log.info("event with evid {} does not exist".format(evid))
+        log.error(e)
+        event = None
+    except MultipleObjectsReturned as e:
+        log.info("more than one event exists with evid {}".format(evid))
+        log.error(e)
+        event = None
+    return event
 
-def _retrieve_event_with_evid(evid):
+def _create_event(name, secured=False):
+    """
+    :return cqlengine.models.Model or None
+    """
+    evid = util.generate_uuid()
+    now = time.time()
+    pass
+
+def _update_event(evid):
+    """
+    :param uuid, a Cue event id
+    :return cqlengine.models.Model or None
+    """
     return -1
-
-def _add_user_to_event(evid, uid):
-    pass
-
-def _remove_user_from_event(evid):
-    pass
-
-def _end_event(evid):
-    pass
 
 class EventAPI(Resource):
     """
@@ -69,12 +86,26 @@ class EventAPI(Resource):
     def get(self, evid):
         """
         Retrieve an event with evid
-
+        :param
         """
-        pass
+        return marshal(event, event_fields)
+
+    def post(self):
+        """
+        Create a new even
+        :param string, and event id
+        :return cqlengine.models.Model or None
+        """
+        log.debug("creating a new event @ {}".format(time.time()))
+        event = _create_event()
 
     def put(self, evid):
         pass
 
     def options(self, evid):
-        pass
+        """
+        Describe API functionality
+        """
+        r = make_response()
+        r.headers['Allow'] = "['GET', 'POST', 'PUT', 'OPTIONS']"
+        return r
