@@ -1,7 +1,7 @@
 import logging
-from models.user import UserBySuriModel, UserByUidModel
-from models.event import EventModel
-from models.cue import CueModel
+from api.v0.models.user import UserBySuriModel, UserByUidModel
+from api.v0.models.event import EventModel
+from api.v0.models.cue import CueModel
 from cassandra.cqlengine.management import sync_table
 from .errors import *
 

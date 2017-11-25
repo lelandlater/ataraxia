@@ -15,4 +15,6 @@ def validate_uuid(str):
     r=m.match(str)
     return bool(r)
 
-
+def validate_suri(str):
+    #DO
+    pass

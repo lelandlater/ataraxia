@@ -22,7 +22,7 @@ def info():
     rendered_html = render_template('info.html', items=items, title='More information')
     return make_response(html_minify(rendered_html), 200)
 
-def display_login_with_spotify():
+def api_visualizer():
     items = [NavItem(url_for('index'), 'BACK')]
-    rendered_html = render_template('login_with_spotify.html', items=items, title='Contact Cue')
+    rendered_html = render_template('api_visualizer.html', items=items, title='API visualizer')
     return make_response(html_minify(rendered_html), 200)

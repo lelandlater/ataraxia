@@ -1,13 +1,12 @@
-import logging, re, json, time
+import json
+import logging
+
 from api.v0.decorators import api
-from api.v0 import db
-from api.v0.util import validate_uuid
 from api.v0.errors import CueAPIResourceRetrievalError
 from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
-from cassandra.cqlengine.query import DoesNotExist, MultipleObjectsReturned
 from cassandra.cqlengine.models import Model
-from flask import make_response
+from cassandra.cqlengine.query import DoesNotExist, MultipleObjectsReturned
 from flask_restful import fields, Resource, marshal_with
 
 log = logging.getLogger('cue-api.user')
@@ -38,14 +37,6 @@ class UserDataFields:
         'active': fields.Boolean
     }
 
-def _user_exists_with_suri(suri):
-    """
-    :param suri, a Spotify user resource identifier
-    :return boolean
-    """
-    if not _valid_suri_regex(suri):
-        raise CueAPIResourceRetrievalError("Invalid URI called on /user")
-
 def _retrieve_user_with_uid(uid):
     """
     :cql #DO
@@ -53,7 +44,7 @@ def _retrieve_user_with_uid(uid):
     :return user, returned as a cqlengine Model (None if not found)
     """
     if not util.validate_uuid(uid):
-        raise CueAPIResourceRetrievalError("Invalid UUID called on /user")
+        raise CueAPIResourceRetrievalError("invalid uuid called on /user")
     try:
         user = UserByUid.get(uid=uid)
     except DoesNotExist as e:
@@ -69,9 +60,11 @@ def _retrieve_user_with_uid(uid):
 def _retrieve_user_with_suri(suri):
     """
     :cql SELECT * FROM user_by_suri WHERE suri = ? values (suri) or something...
-    :param suri, a Spotify user resource identifier
-    :return user, returned as a cqlengine Model (None if not found)
+    :param suri: a Spotify user resource identifier
+    :return cqlengine.models.Model or None
     """
+    if not util.validate_suri(suri):
+        raise CueAPIResourceRetrievalError("invalid suri called on /user")
     try:
         user = UserBySuri.get(suri=suri)
     except DoesNotExist as e:
@@ -84,7 +77,11 @@ def _retrieve_user_with_suri(suri):
         user = None
     return user
 
-
+def _create_user(suri):
+    """
+    :param suri:
+    :return:
+    """
 
 
 class UserAPI(Resource):

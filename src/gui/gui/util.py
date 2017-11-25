@@ -1,9 +1,8 @@
 from flask import url_for, session, render_template, current_app
-import HTMLParser
-#from html.parser import HTMLParser
+from html.parser import HTMLParser
 
 """ATARAXIA in Greek."""
-hparser=HTMLParser.HTMLParser()
+hparser=HTMLParser()
 ataraxia='&#x3AC;&#x3C4;&#x3B1;&#x3C1;&#x3B1;&#x3BE;&#x3AF;&#x3B1;'
 ataraxia=hparser.unescape(ataraxia)
 

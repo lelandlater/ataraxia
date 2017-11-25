@@ -9,7 +9,7 @@ services:
     links:
       - api
     volumes:
-      - static:/cuegui/gui/static
+      - static:/usr/src/app/gui/static
   api:
     container_name: api0
     restart: always

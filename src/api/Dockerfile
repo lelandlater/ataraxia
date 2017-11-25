@@ -10,10 +10,7 @@ RUN apk add --no-cache \
     python3
 
 COPY . .
-RUN rm -rf public/*
+#RUN rm -rf public/*
 
-RUN pip3 install --no-cachr-dir -r requirements.txt
-CMD [ "uwsgi", "--socket", "0.0.0.0:9000", \
-               "--plugins", "python3", \
-               "--protocol", "uwsgi", \
-               "--wsgi", "manage:gui" ]
+RUN pip3 install --no-cache-dir -r requirements.txt
+CMD [ "uwsgi", "--ini", "uwsgi.ini"]
