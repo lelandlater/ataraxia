@@ -1,8 +1,8 @@
 import logging
 from api.v0 import create_app
-from api.v0.models.user import UserBySuriModel, UserByUidModel
-from api.v0.models.event import EventModel
-from api.v0.models.cue import CueModel
+from api.v0.models.user import User
+from api.v0.models.event import Event
+from api.v0.models.cue import Cue
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.management import sync_table
 from config import config
@@ -19,7 +19,7 @@ app = create_app(config.DevelopmentConfig)
 
 if __name__=="__main__":
     connection.setup([app.config["CASSANDRA_HOST"]], "cqlengine", protocol_version=3)
-    sync_table(UserBySuriModel); sync_table(UserByUidModel)
-    sync_table(EventModel)
-    sync_table(CueModel)
+    sync_table(User)
+    sync_table(Event)
+    sync_table(Cue)
     app.run(port=10101, debug=True, use_reloader=False)

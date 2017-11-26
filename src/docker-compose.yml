@@ -17,10 +17,10 @@ services:
     ports:
       - 10101:10101
     links:
-      - cassandra:db
+      - cassandra
       #- redis:cache
   cassandra:
-    image: cassandra
+    build: ./cassandra
     container_name: cassandra0
     ports:
        - 9042:9042
@@ -35,21 +35,32 @@ services:
   #    - 6379:6379
   #  volumes:
   #    - redis:/data
-  openresty-acq:
-    container_name: acquire_certs
+  openresty-local:
+    container_name: openresty-local0
     build:
       context: ./openresty
-      dockerfile: Dockerfile-acq
+      dockerfile: Dockerfile-local
     ports:
       - 80:80
-      - 443:443
+    links:
+      - gui
     environment:
-      - JWT_SECRET=""
-    volumes:
-      - certs:/etc/letsencrypt
-      - certs_data:/data/letsencrypt
+      - JWT_SECRET="" 
+  #openresty-acq:
+  #  container_name: openresty-acq0
+  #  build:
+  #    context: ./openresty
+  #    dockerfile: Dockerfile-acq
+  #  ports:
+  #    - 80:80
+  #    - 443:443
+  #  environment:
+  #    - JWT_SECRET=""
+  #  volumes:
+  #    - certs:/etc/letsencrypt
+  #    - certs_data:/data/letsencrypt
   #openresty-ssl:
-  #  container_name: openresty0
+  #  container_name: openresty-ssl0
   #  build:
   #    context: ./openresty
   #    dockerfile: Dockerfile-ssl

@@ -1,8 +1,7 @@
 import logging
 
-import api.v0.util
-
 from api.v0.decorators import api
+from api.v0.util import generate_uuid
 from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.models import Model
@@ -11,14 +10,14 @@ from flask import make_response
 from flask_restful import Resource, fields, marshal
 
 log = logging.getLogger('cue-api.event')
-connection.setup(['cassandra']), 'v0', protocol_version=3)
+connection.setup(['cassandra'], 'v0', protocol_version=3)
 
 class Event(Model):
     """
     Each event has exactly one host and exactly one cue.
     Each each event has a set of users (attendees) unique amongst all users.
     """
-    evid = columns.UUID(primary_key=True, required=True, default=uuid.uuid4)
+    evid = columns.UUID(primary_key=True, required=True, default=generate_uuid())
     host = columns.UUID(required=True)
     name = columns.Text()
     cid = columns.UUID(required=True)

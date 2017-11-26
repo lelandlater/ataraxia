@@ -1,7 +1,6 @@
 from functools import wraps
 from flask import g, request, make_response
 from werkzeug.exceptions import HTTPException
-from .errors import ClientAuthorizationError
 
 def api(f):
     """
@@ -28,7 +27,7 @@ def auth(f):
                 token=request.values.get('jwt')
                 if _validate_jwt(token):
                     return f(*args,**kwargs)
-            except ClientAuthorizationError as e:
+            except Exception as e:
                 log.error('JSON Web Token is not valid. Check token or authorizer function in decorators.py')
                 resp = make_response(e, 403)
                 resp.headers['Content-Type'] = 'application/json'

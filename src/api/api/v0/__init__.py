@@ -2,7 +2,6 @@ import os
 import logging
 from flask import Flask
 from flask_restful import Api
-from api.v0.database import CueAPIDatabase
 
 log = logging.getLogger('cueapi.init')
 
@@ -18,19 +17,16 @@ def create_app(cfg=None):
     log.info('Routes registered.')
 
     log.info('Beginning db setup...')
-    db = CueAPIDatabase(app.config['CASSANDRA_HOST'])
     if app.config["TESTING"]:
-        db._populate_with_test_data()
+        pass
     if app.config["DEMO"]:
-        db._populate_with_demo_data()
+        pass
     log.debug('Creating database tables...')
     log.debug('Database tables created.')
     log.debug('Preparing statements...')
-    #db._prepare_statements()
     log.debug('Prepared statements.')
     if app.config['TESTING']:
         log.debug('TESTING is True -- populating the database with demo data...')
-        db._populatedb()
         log.debug('Populated the database.')
     log.info('db setup complete.')
 
