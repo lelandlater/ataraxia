@@ -1,7 +1,7 @@
 import sys
 from flask import Blueprint, redirect
 from flask_restful import Api
-from models import user, event, cue
+from api.v0.models import user, event, cue
 
 v0 = Blueprint('v0', __name__, url_prefix='/v0')
 api = Api(v0)

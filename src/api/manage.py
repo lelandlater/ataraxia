@@ -18,8 +18,9 @@ app = create_app(config.DevelopmentConfig)
 # add Flask-Script, management functions here
 
 if __name__=="__main__":
-    connection.setup([app.config["CASSANDRA_HOST"]], "cqlengine", protocol_version=3)
+    connection.setup(['cassandra'], 'v0', protocol_version=3)
     sync_table(User)
     sync_table(Event)
     sync_table(Cue)
+    log.info("Got to here...")
     app.run(port=10101, debug=True, use_reloader=False)

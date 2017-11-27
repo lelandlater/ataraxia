@@ -2,7 +2,7 @@ import collections
 import typing
 import logging, json
 
-import api.v0.util
+from api.v0.util import generate_uuid
 
 from api.v0.decorators import api
 from api.v0.errors import CueAPIResourceRetrievalError, \
@@ -27,7 +27,7 @@ class Cue(Model):
     Each event has one and only one cue.
     This model interfaces with the Cassandra session.
     """
-    cid = columns.UUID(primary_key=True, required=True, default=uuid.uuid4)
+    cid = columns.UUID(primary_key=True, required=True, default=generate_uuid())
     evid = columns.UUID(required=True),
     next = columns.Text()
     nextnext = columns.Text()
@@ -76,7 +76,10 @@ def _create_cue(evid):
     if not util.validate_uuid(evid):
         raise CueAPIResourceCreationError("invalid uuid called on /event")
     try:
-        Cue.if_not_exists().create
+        Cue.if_not_exists().create()
+    except Exception as e:
+        log.error(e)
+    pass
 
 def _update_cue(cid):
     """

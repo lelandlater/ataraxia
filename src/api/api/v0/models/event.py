@@ -1,7 +1,7 @@
 import logging
 
 from api.v0.decorators import api
-from api.v0.util import generate_uuid
+from api.v0.util import generate_uuid, CueUser, validate_uuid
 from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.models import Model
@@ -31,11 +31,11 @@ class Event(Model):
 
 event_fields = {
     'evid': fields.String,
-    'host': util.CueUser(),
+    'host': CueUser(),
     'name': fields.String,
     'cid': fields.String,
     'np': fields.String,
-    'attendees': fields.List(CueUserDataField()),
+    'attendees': fields.List(CueUser()),
     'private': fields.Boolean,
     'pin': fields.String,
     'created_at': fields.String,
@@ -47,7 +47,7 @@ def _retrieve_event(evid):
     :param uuid, a Cue event id
     :return cqlengine.models.Model or None
     """
-    if not util.validate_uuid(evid):
+    if not validate_uuid(evid):
         raise CueAPIRetrievalError("invalid uuid called on /event")
     try:
         event = Event.get(evid=evid)
@@ -82,12 +82,16 @@ class EventAPI(Resource):
     """
     decorators=[api]
 
-    def get(self, evid):
-        """
-        Retrieve an event with evid
-        :param
-        """
-        return marshal(event, event_fields)
+    def get(self):
+        return "This is a response..."
+
+    #def get(self, evid):
+    #    """
+    #    Retrieve an event with evid
+    #    :param
+    #    """
+        #return marshal(event, event_fields)
+    #    return "This is an endpoint..."
 
     def post(self):
         """
