@@ -2,7 +2,7 @@ import logging
 import json
 import requests
 
-import api.v0.util
+from api.v0.util import generate_uuid, validate_uuid
 
 from api.v0.decorators import api
 from api.v0.errors import CueAPIResourceRetrievalError, \
@@ -39,7 +39,7 @@ def _retrieve_user(uid):
     :param uid, a Cue user id
     :return user, returned as a cqlengine Model (None if not found)
     """
-    if not util.validate_uuid(uid):
+    if not validate_uuid(uid):
         log.error("{} is not a valid uuid".format(uid))
         raise CueAPIResourceRetrievalError("invalid uuid called on /user")
     try:
@@ -59,7 +59,7 @@ def _create_user(suri):
     :param string, Spotify resource identifier
     :return cqlengine.models.Model or None
     """
-    uid = util.generate_uuid()
+    uid = generate_uuid()
     now = time.time()
     name = 'Leland' #spotify: query for username by suri =requests.get("")
     try:
@@ -84,6 +84,9 @@ class UserAPI(Resource):
     REST API for user table
     """
     decorators=[api]
+
+    def get(self):
+        return "{'is-this-a-json-repsonse': 'I hope'}"
 
     def get(self, uid):
         """

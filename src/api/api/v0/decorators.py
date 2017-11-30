@@ -6,15 +6,13 @@ def api(f):
     """
     Adds response headers to endpoints.
     """
-    def decorator(f):
-        @wraps(f)
-        def endpt(*args,**kwargs):
-            resp = make_response(f(*args,**kwargs))
-            resp.headers['Content-Type'] = 'application/json'
-            resp.headers['Content-Length'] = sys.getsizeof(resp)
-            return resp
-        return endpt
-    return decorator
+    @wraps(f)
+    def endpt(*args,**kwargs):
+        resp = make_response(f(*args,**kwargs))
+        resp.headers['Content-Type'] = 'application/json'
+        resp.headers['Content-Length'] = sys.getsizeof(resp)
+        return resp
+    return endpt
 """
 def auth(f):
     '''
@@ -36,11 +34,11 @@ def auth(f):
             return resp
         return authorize
     return decorator
-"""
+
 def admin(f):
-    """
+    '''
     Admin-only data.
-    """
+    '''
     def decorator(f):
         @wraps(f)
         def admin(*args,**kwargs):
@@ -53,3 +51,4 @@ def admin(f):
             return
         return admin
     return decorator
+"""
