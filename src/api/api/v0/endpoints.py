@@ -10,9 +10,6 @@ def index():
     return redirect("https://docs.cue.zone/api", code=301)
     
 v0.add_url_rule('/', 'index', index)
-"""
 api.add_resource(user.UserAPI, '/users', '/users/<uuid:uid>')
 api.add_resource(event.EventAPI, '/events', '/events/<uuid:evid>')
 api.add_resource(cue.CueAPI, '/cues', '/cues/<uuid:cid>')
-"""
-api.add_resource(user.UserAPI, '/usertest', '/usertest/<string:uid>')
