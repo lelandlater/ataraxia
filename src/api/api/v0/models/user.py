@@ -17,7 +17,7 @@ from flask import make_response
 from flask_restful import fields, Resource, marshal
 
 log = logging.getLogger('cue-api.user')
-connection.setup(['cassandra'], 'v0', protocol_version=3)
+#connection.setup(['cassandra'], 'v0', protocol_version=3)
 
 class User(Model):
     """Cassandra data model for user table with Cue user id as primary key."""
