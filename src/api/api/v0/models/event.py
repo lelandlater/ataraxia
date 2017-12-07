@@ -6,6 +6,10 @@ from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.models import Model
 
+from cassandra.cqlengine.query import DoesNotExist, \
+                                      MultipleObjectsReturned, \
+                                      LWTException
+
 from flask import make_response
 from flask_restful import Resource, fields, marshal
 
@@ -43,22 +47,26 @@ event_fields = {
 }
 
 def _retrieve_event(evid):
-    """
-    :param uuid, a Cue event id
+    """Query database and return a Cue event data object
+
+    :param uuid evid: a Cue event id
     :return cqlengine.models.Model or None
     """
     if not validate_uuid(evid):
-        raise CueAPIRetrievalError("invalid uuid called on /event")
+        log.info(f"invalid event uuid {evid}")
+        return None
     try:
         event = Event.get(evid=evid)
     except DoesNotExist as e:
-        log.info("event with evid {} does not exist".format(evid))
-        log.error(e)
-        event = None
+        log.info(f"event {evid} does not exist")
+        log.info(e)
+        event = None # does code ever get byond raise here?
     except MultipleObjectsReturned as e:
-        log.info("more than one event exists with evid {}".format(evid))
-        log.error(e)
+        log.info(f"more than one event {evid} exists")
+        log.info(e)
         event = None
+    except Exception as e:
+        log.info("error retrieiving event")
     return event
 
 def _create_event(name, secured=False):
@@ -77,21 +85,22 @@ def _update_event(evid):
     return -1
 
 class EventAPI(Resource):
+    """From Flask-Restful, a REST API for event table.
     """
-    From Flask-Restful, a REST API for event table.
-    """
-    decorators=[api]
 
     def get(self):
-        return "This is a response..."
+        return "Return all events. This response should be paginated."
 
-    #def get(self, evid):
-    #    """
-    #    Retrieve an event with evid
-    #    :param
-    #    """
-        #return marshal(event, event_fields)
-    #    return "This is an endpoint..."
+    def get(self, evid):
+        """
+        Retrieve an event with evid
+        :param evid: uuid4 for the event
+        """
+        try:
+            event=_retrieve_event(evid)
+        except
+
+        return marshal(event, event_fields)
 
     def post(self):
         """
