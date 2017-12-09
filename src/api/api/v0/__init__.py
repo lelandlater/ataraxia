@@ -3,13 +3,13 @@ import logging
 from flask import Flask
 from flask_restful import Api
 
-log = logging.getLogger('cueapi.init')
+log = logging.getLogger(__name__)
 
 def create_app(cfg=None):
     app = Flask(__name__)
 
-    if cfg is not None:
-        app.config.from_object(cfg)
+    if cfg:
+        app.config.from_pyobject(cfg)
 
     log.debug('Registering routes...')
     from .endpoints import v0

@@ -1,0 +1,37 @@
+---
+version: 1
+disable_existing_loggers: False
+formatters:
+  debug:
+    format: "%(asctime)s %(name)s => %(message)s"
+    datefmt: "%s"
+  simple:
+    format: "%(asctime)s [%(levelname)] %(name)s: %(message)s"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+  debug_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    filename: log/debug.log
+    maxBytes: 10485760 # 10MB
+    backupCount: 20
+    encoding: utf8
+  info_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    filename: log/info.log
+    maxBytes: 10485760 # 10MB
+    backupCount: 20
+    encodging: utf8
+loggers:
+  api:
+    level: DEBUG
+    handlers: [console]
+    propagate: yes
+root:
+  level: INFO
+  handlers: [console, debug_file_handler, info_file_handler]

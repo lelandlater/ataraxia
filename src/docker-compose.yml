@@ -19,6 +19,12 @@ services:
     links:
       - cassandra
       #- redis:cache
+    environment:
+      - CUEAPI_SECRET_KEY=""
+      - CUEAPI_LOG_CONFIGURATION=""
+      - CASSANDRA_HOST=""
+      - TESTING=""
+      - DEBUG=""
   cassandra:
     build: ./cassandra
     container_name: cassandra0
