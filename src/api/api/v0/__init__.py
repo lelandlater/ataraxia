@@ -9,7 +9,7 @@ def create_app(cfg=None):
     app = Flask(__name__)
 
     if cfg:
-        app.config.from_pyobject(cfg)
+        app.config.from_object(cfg)
 
     log.debug('Registering routes...')
     from .endpoints import v0
@@ -18,8 +18,6 @@ def create_app(cfg=None):
 
     log.info('Beginning db setup...')
     if app.config["TESTING"]:
-        pass
-    if app.config["DEMO"]:
         pass
     log.debug('Creating database tables...')
     log.debug('Database tables created.')

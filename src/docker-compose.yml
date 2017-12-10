@@ -21,7 +21,7 @@ services:
       #- redis:cache
     environment:
       - CUEAPI_SECRET_KEY=""
-      - CUEAPI_LOG_CONFIGURATION=""
+      - CUEAPI_LOG_CONFIGURATION="config/log.cueapi.yml"
       - CASSANDRA_HOST=""
       - TESTING=""
       - DEBUG=""

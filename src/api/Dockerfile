@@ -12,5 +12,6 @@ RUN apk add --no-cache \
 COPY . .
 
 RUN pip3 install --no-cache-dir -r requirements.txt
-CMD [ "python3", "manage.py" ]
+#ENTRYPOINT [ "/bin/sh", "-c", "echo", "'This is up!'" ]
+CMD [ "python3", "-i", "manage.py" ]
 #CMD [ "uwsgi", "--emperor", "/usr/src/app" ]

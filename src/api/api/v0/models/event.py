@@ -13,7 +13,7 @@ from cassandra.cqlengine.query import DoesNotExist, \
 from flask import make_response
 from flask_restful import Resource, fields, marshal
 
-log = logging.getLogger('cue-api.event')
+log = logging.getLogger(__name__)
 connection.setup(['cassandra'], 'v0', protocol_version=3)
 
 class Event(Model):
@@ -66,7 +66,7 @@ def _retrieve_event(evid):
         log.info(e)
         event = None
     except Exception as e:
-        log.info("error retrieiving event")
+        log.info(f"error retrieiving event {evid}")
     return event
 
 def _create_event(name, secured=False):
@@ -98,9 +98,12 @@ class EventAPI(Resource):
         """
         try:
             event=_retrieve_event(evid)
-        except
-
-        return marshal(event, event_fields)
+        except Exception as e:
+            log.info(f"error retrieving event {evid}")
+        if event:
+            return marshal(event, event_fields)
+        else:
+            return "Did not work..."
 
     def post(self):
         """
