@@ -1,6 +1,5 @@
 .*
 !/.gitignore
 *.pyc
-env/
-data/
 *.pem
+opt/
