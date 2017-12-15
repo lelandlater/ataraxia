@@ -1,0 +1,21 @@
+version: '3.4'
+services:
+  webapp:
+    container_name: webapp1
+    restart: always
+    build: webapp/
+    ports:
+      - 8000:8000
+    environment:
+      - VERSION="0.1"
+    volumes:
+      - test_webapp_1:/app
+  tests:
+    container_name: tests1
+    build: tests/
+    ports:
+      - 9000:9000
+    volumes:
+      - test_webapp_1:/app
+  #openresty:
+    #this has to be an alipine image

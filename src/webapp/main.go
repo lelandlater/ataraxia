@@ -14,11 +14,20 @@ func init() {
 	log.Debug("Initialized the logger")
 }
 
+func newRouter() *mux.Router {
+	r := mux.NewRouter()
+	r.HandleFunc("/hello", handler).Methods("GET")
+
+	staticFileDirectory := http.Dir("./assets/")
+
+	staticFileHandler := http.StripPrefix("/assets/", http.FileServer(staticFileDirectory))
+    r.PathPrefix("/assets/").Handler(staticFileHandler).Methods("GET")
+	return r
+}
+
 func main() {
 
-	r := mux.NewRouter()
-
-	r.HandleFunc("/", handler).Methods("GET")
+	r := newRouter()
 	http.ListenAndServe(":8000", r)
 }
 
