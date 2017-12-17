@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ATARAXIA</title>
+  </head>
+  <body>
+    <h1>ATARAXIA ADMIN</h1>
+    <table>
+    <tr>
+        <th>Post Title</th>
+        <th>timestamp</th>
+    </tr>
+    <tr>
+      <td>Reading List 2017</td>
+      <td>000000</td>
+    </tr>
+    </table>
+    <br/>
+
+    <form action="/add-post" method="post">
+        Title:
+        <input type="text" name="posttitle">
+        <br/> Content:
+        <input type="text" name="content">
+        <br/>
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        postTable = document.querySelector("table")
+        fetch("/add-post")
+                .then(response => response.json())
+                .then(postList => {
+                    postList.forEach(post => {
+            row = document.createElement("tr")
+
+            posttitle = document.createElement("td")
+            posttitle.innerHTML = post.title
+            content = document.createElement("td")
+            content.innerHTML = post.content
+
+            row.appendChild(posttitle)
+            row.appendChild(content)
+
+            postTable.appendChild(row)
+          })
+        })
+    </script>
+  </body>
+</html>
