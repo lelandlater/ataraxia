@@ -1,64 +1,61 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-    text-decoration: none;
-}
-
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-    display: block;
-}
 body {
-    line-height: 1;
+    margin: 0;
 }
-ol, ul {
-    list-style: none;
+header {
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+    padding: 10vh 0;
+    background-color: #45ef6a;
 }
-blockquote, q {
-    quotes: none;
+.ataraxia-text {
+    font-family: 'Helvetica', sans-serif;
+    color: #2A2A2A;
+    font-weight: 200;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
+.ataraxia-logo {
+    font-family: 'GFS-Didot', serif;
 }
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-input {
+.content-wrapper {
+    margin: 0 auto;
     width: 100%;
 }
+.postlist-wrapper {
+    margin: 0 auto;
+    width: 90%;
 
-input[type=text] {
-    width: 100%;
-    padding: 12px 10px;
-    margin: 8px 0;
-    box-sizing: border-box;
+}
+.post-wrapper {
+    margin: 0 auto;
+    width: 98%;
+
+    padding-bottom: 48px;
+}
+.post-title-wrapper {
+    margin: 0 auto;
+    width: 100;
+}
+.post-title {
+    font-size: 4.3em;
+
+    font-weight: 200;
 }
 
-input[type=text] {
-    border: none;
-    border-bottom: 2px solid #F5F5F5;
-}
+.post-info-wrapper {
+    margin: 0 auto;
+    padding-left: 24px;
+    width: 70%;
+    display: inline-flex;
 
-input[type=text]:focus {
-    border: 3px solid #2A2A2A;
+}
+.post-author {
+    display: flex;
+}
+.post-date {
+    display: flex;
+}
+.post-content-wrapper {
+    margin: 0 auto;
+    width: 98%;
+
 }

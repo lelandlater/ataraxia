@@ -1,10 +1,10 @@
 package main
 
 import (
-	"io/ioutil"
+	"testing"
 	"net/http"
 	"net/http/httptest"
-	"testing"
+	"io/ioutil"
 )
 
 func TestHandler(t *testing.T) {

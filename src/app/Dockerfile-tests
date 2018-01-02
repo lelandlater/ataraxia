@@ -2,6 +2,8 @@ FROM golang:alpine AS build-env
 MAINTAINER 'Leland Later <llater@ataraxia.io>'
 ADD . /src
 RUN apk add --no-cache git ca-certificates tzdata && \
-    go get github.com/sirupsen/logrus github.com/gorilla/mux
+    go get github.com/sirupsen/logrus \
+        github.com/gorilla/mux \
+        github.com/stretchr/testify/suite
 WORKDIR /src
 ENTRYPOINT go test .

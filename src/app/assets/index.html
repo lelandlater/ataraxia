@@ -3,46 +3,95 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ATARAXIA</title>
+      <link href="https://fonts.googleapis.com/css?family=GFS+Didot|Lato" rel="stylesheet">
+      <link rel="stylesheet" href="./reset.css">
+      <link rel="stylesheet" href="./ataraxia.css">
+      <title>ATARAXIA</title>
   </head>
   <body>
-    <h1>ATARAXIA ADMIN</h1>
-    <table>
+  <header>
+      <h1 class="ataraxia-text ataraxia-header"><span class="ataraxia-logo">&#x3AC;&#x3C4;&#x3B1;&#x3C1;&#x3B1;&#x3BE;&#x3AF;&#x3B1;</span><br/>
+          Administrative Interface</h1>
+  </header>
+      <table>
     <tr>
-        <th>Post Title</th>
-        <th>timestamp</th>
+        <th class="ataraxia-text table-header">Post Title</th>
+        <th class="ataraxia-text table-header">Publish Date</th>
+        <th class="ataraxia-text table-header">Description</th>
     </tr>
-    <tr>
-      <td>Reading List 2017</td>
-      <td>000000</td>
-    </tr>
-    </table>
+          <tr>
+          <td>Example Title</td>
+          <td>Example Date</td>
+          <td>Example Description</td>
+          </tr>
+      </table>
     <br/>
-
+    <div class="form-wrapper">
     <form action="/add-post" method="post">
-        Title:
-        <input type="text" name="posttitle">
-        <br/> Content:
-        <input type="text" name="content">
+        <span class="ataraxia-text submit-post-form-label">Title</span>
+        <input type="text" name="title">
+        <br/><span class="ataraxia-text submit-post-form-label">Publish Date</span>
+        <input type="text" name="date">
+        <br/><span class="ataraxia-text submit-post-form-label">Description</span>
+        <input type="text" name="description">
         <br/>
-        <input type="submit" value="Submit">
+        <input type="submit" value="SUBMIT">
     </form>
+  </div>
+  <header><h1>ATARAXIA</h1></header>
+  <div class="content-wrapper">
+      <div class="postlist-wrapper">
+          <div class="post-wrapper">
+              <div class="post-title-wrapper ataraxia-text">
+                  <h1 class="post-title">This is a title</h1>
+              </div>
+              <div class="post-info-wrapper">
+                  <h2 class="post-author ataraxia-text">Leland Later</h2>
+                  <h2 class="post-date ataraxia-text">December 31</h2>
+              </div>
+              <div class="post-content-wrapper ataraxia-text">
+                  <p class="post-content first-paragraph">Some content</p>
+                  <p class="post-content middle-paragraph">More content</p>
+                  <p class="post-content end-paragraph">End of content</p>
+              </div>
+          </div>
+          <div class="post-wrapper">
+              <h1 class="post-title ataraxia-text">This is another title</h1>
+              <div class="post-info-wrapper">
+                  <h2 class="post-author ataraxia-text">Leland Later</h2>
+                  <h2 class="post-date ataraxia-text">January 1</h2>
+              </div>
+              <div class="post-content-wrapper ataraxia-text">
+                  <p class="post-content first-paragraph">Some content</p>
+                  <p class="post-content middle-paragraph">More content</p>
+                  <p class="post-content end-paragraph">End of content</p>
+              </div>
+          </div>
+      </div>
+  </div>
+
 
     <script>
         postTable = document.querySelector("table")
         fetch("/add-post")
                 .then(response => response.json())
-                .then(postList => {
-                    postList.forEach(post => {
-            row = document.createElement("tr")
+              .then(postList => {
+                        postList.forEach(post => {
+                            row = document.createElement("tr")
 
-            posttitle = document.createElement("td")
-            posttitle.innerHTML = post.title
-            content = document.createElement("td")
-            content.innerHTML = post.content
+                            postTitle = document.createElement("td")
+                            postTitle.innerHTML = post.title
+            //title.classList.add("table-content ataraxia-text")
+            date = document.createElement("td")
+            date.innerHTML = post.date
+            //date.classList.add("table-content ataraxia-text")
 
-            row.appendChild(posttitle)
-            row.appendChild(content)
+            description = document.createElement("td")
+            description.innerHTML = post.description
+
+            row.appendChild(postTitle)
+            row.appendChild(date)
+            row.appendChild(description)
 
             postTable.appendChild(row)
           })

@@ -1,0 +1,5 @@
+FROM openresty/openresty:alpine
+MAINTAINER 'Leland Later <lelandlater@gmail.com>'
+
+COPY acq.ataraxia.nginx.conf /etc/nginx/conf.d/
+

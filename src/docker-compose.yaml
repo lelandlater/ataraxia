@@ -8,13 +8,80 @@ services:
       - 8000:8000
     environment:
       - VERSION="0.1"
-  openresty:
-    image: openresty/openresty:alpine
+    labels:
+      - io.ataraxia.app
+      - io.ataraxia.app.VERSION=0.1
+      - io.ataraxia.app.launched_at=
+      - io.ataraxia.app.build_id=
+  postgres:
+    container_name: postgres_1
+    restart: always
+    build: db
+    ports:
+      - 5432:5432
+    environment:
+      - ATARAXIA_DB_USER="ataraxia"
+      - ATARAXIA_DB_PASSWORD="this-is-a-password"
+      - ATARAXIA_DB_DATABASE="ataraxiadb"
+      - POSTGRES_PASSWORD="this-is-a-password"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    labels:
+      - io.ataraxia.postgres
+      - io.ataraxia.postgres.launched_at=
+      - io.ataraxia.postgres.build_id=
+  openresty-local:
+    container_name: openresty_local_1
+    build:
+      context: webserver
+      dockerfile: Dockerfile-local
     ports:
       - 80:80
       - 443:443
+    environment:
+      - JWT_SECRET=this-is-a-secret
+  #openresty-acq:
+  #  container_name: openresty_acq_1
+  #  build:
+  #    context: webserver
+  #    dockerfile: Dockerfile-acq
+  #  ports:
+  #    - 80:80
+  #    - 443:443
+  #  environment:
+  #    - JWT_SECRET="" 
+  #  volumes:
+  #    - certs:/etc/letsencrypt
+  #    - certs_data:/data/letsencrypt
+  #letsencrypt:
+  #  container_name: letsencrypt_1
+  #  image: deliverous/certbot
+  #  volumes:
+  #    - certs:/etc/letsencrypt
+  #    - certs_data:/data/letsencrypt
+  #  command: "certonly --webroot --webroot-path=/data/letsencrypt --renew-by-default -d ataraxia.io --email lelandlater@gmail.com --agree-tos --no-eff-email --non-interactive"
+  #openresty-ssl:
+  #  container_name: openresty_ssl_1
+  #  build:
+  #    context: webserver
+  #    dockerfile: Dockerfile-ssl
+  #  ports:
+  #    - 80:80
+  #    - 443:443
+  #  environment:
+  #    - JWT_SECRET="this-is-a-secret"
   tests:
+    container_name: tests
     build:
       context: app
       dockerfile: Dockerfile-tests
-
+volumes:
+  certs:
+    driver: local
+    name: ssl_certs
+  certs_data:
+    driver: local
+    name: ssl_certs_data
+  pgdata:
+    driver: local
+    name: ataraxiadb

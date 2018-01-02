@@ -7,8 +7,9 @@ import (
 )
 
 type Post struct {
-	Posttitle string `json:"title"`
-	Content   string `json:"content"`
+	Title string `json:"title"`
+	Date   string `json:"date"`
+	Description string `json:"description"`
 }
 
 var posts []Post
@@ -35,8 +36,9 @@ func createPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	post.Posttitle = r.Form.Get("posttitle")
-	post.Content = r.Form.Get("content")
+	post.Title = r.Form.Get("title")
+	post.Date = r.Form.Get("date")
+	post.Description = r.Form.Get("description")
 
 	posts = append(posts, post)
 
