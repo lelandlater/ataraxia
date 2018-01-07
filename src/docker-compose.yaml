@@ -88,4 +88,4 @@ volumes:
     name: ssl_certs_data
   pgdata:
     driver: local
-    name: ataraxiadb
+    name: pgdata
