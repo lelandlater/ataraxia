@@ -4,6 +4,7 @@ ADD . /src
 RUN apk add --no-cache git ca-certificates tzdata && \
     go get github.com/sirupsen/logrus \
         github.com/gorilla/mux \
-        github.com/stretchr/testify/suite
+        github.com/stretchr/testify/suite \
+        github.com/lib/pq
 WORKDIR /src
 ENTRYPOINT go test .

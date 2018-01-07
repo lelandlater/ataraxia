@@ -4,6 +4,8 @@ services:
     container_name: app_1
     restart: always
     build: app
+    links:
+      - postgres
     ports:
       - 8000:8000
     environment:
@@ -12,7 +14,7 @@ services:
       - io.ataraxia.app
       - io.ataraxia.app.VERSION=0.1
       - io.ataraxia.app.launched_at=
-      - io.ataraxia.app.build_id=
+      - io.ataraxia.app.build_id={{ build_id }}
   postgres:
     container_name: postgres_1
     restart: always
@@ -20,10 +22,10 @@ services:
     ports:
       - 5432:5432
     environment:
-      - ATARAXIA_DB_USER="ataraxia"
-      - ATARAXIA_DB_PASSWORD="this-is-a-password"
-      - ATARAXIA_DB_DATABASE="ataraxiadb"
-      - POSTGRES_PASSWORD="this-is-a-password"
+      - ATARAXIA_DB_USER=ataraxia
+      - ATARAXIA_DB_PASSWORD=this-is-a-password
+      - ATARAXIA_DB_DATABASE=ataraxiadb
+      - POSTGRES_PASSWORD=this-is-a-password
     volumes:
       - pgdata:/var/lib/postgresql/data
     labels:
@@ -32,6 +34,8 @@ services:
       - io.ataraxia.postgres.build_id=
   openresty-local:
     container_name: openresty_local_1
+    links:
+      - app
     build:
       context: webserver
       dockerfile: Dockerfile-local

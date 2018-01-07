@@ -7,8 +7,8 @@ import (
 )
 
 type Post struct {
-	Title string `json:"title"`
-	Date   string `json:"date"`
+	Title       string `json:"title"`
+	Date        string `json:"date"`
 	Description string `json:"description"`
 }
 

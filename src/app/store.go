@@ -5,7 +5,7 @@ import (
 )
 
 type Store interface {
-	CreatePost(bird *Post) error
+	CreatePost(post *Post) error
 	GetPosts() ([]*Post, error)
 }
 
@@ -42,4 +42,5 @@ var store Store
 
 func InitStore(s Store) {
     store = s
-	}
+
+    }
