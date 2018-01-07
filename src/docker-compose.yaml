@@ -7,7 +7,7 @@ services:
     links:
       - postgres
     ports:
-      - 8000:8000
+      - 8000
     environment:
       - VERSION="0.1"
     labels:

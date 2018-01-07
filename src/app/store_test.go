@@ -71,7 +71,7 @@ func (s *StoreSuite) TestCreatePost() {
 
 func (s *StoreSuite) TestGetPost() {
 
-	_, err := s.db.Query(`INSERT INTO posts (title, date, description) VALUES('title','date','description')`)
+	_, err := s.db.Query(`INSERT INTO posts (title, date, description) VALUES('title', 'date','description')`)
 	if err != nil {
 		s.T().Fatal(err)
 	}

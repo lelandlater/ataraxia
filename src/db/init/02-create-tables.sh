@@ -12,7 +12,7 @@ create_blog_tables() {
     CREATE TABLE posts (
       id SERIAL PRIMARY KEY,
       title VARCHAR(256),
-      date TIMESTAMP,
+      date VARCHAR(32),
       description VARCHAR(4096)
     );
 EOSQL

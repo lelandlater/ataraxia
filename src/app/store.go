@@ -14,7 +14,7 @@ type dbStore struct {
 }
 
 func (store *dbStore) CreatePost(post *Post) error {
-	_, err := store.db.Query("INSERT INTO posts(title, date, description) VALUES ($1,$2)", post.Title, post.Date, post.Description)
+	_, err := store.db.Query("INSERT INTO posts(title, date, description) VALUES ($1,$2,$3)", post.Title, post.Date, post.Description)
 	return err
 }
 
