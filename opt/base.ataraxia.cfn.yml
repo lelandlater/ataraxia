@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ATARAXIA base cloud
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.10.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+  BastionSubnet:
+    Type: AWS::EC2::Subnet
+    Description: jumbox to ataraxia cloud
+    Properties:
+      CidrBlock: 10.10.255.0/24
+      VpcId: !Ref VPC
+      MapPublicIpOnLaunch: true
+  AtaraxiaSubnet:
+    Type: AWS::EC2::Subnet
+    Description: ataraxia servers
+    Properties:
+      CidrBlock: 10.10.0.0/24
+      VpcId: !Ref VPC
+      MapPublicIpOnLaunch: true
+  BastionSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Description: allow ssh from anywhere on port 22 # 9999
+    Properties:
+      GroupDescription: allow ssh from anywhere on port 9999
+      GroupName: bastion-sg
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        -
+          IpProtocol: tcp
+          FromPort: 22 # 9999
+          ToPort: 22 # 9999
+          CidrIp: 0.0.0.0/0
+  AtaraxiaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Description: allow ssh from bastion
+    Properties:
+      GroupDescription: allow ssh from bastion on port 22 # 9998
+      GroupName: ataraxia-sg
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        -
+          IpProtocol: tcp
+          FromPort: 22 # 9998
+          ToPort: 22 # 9998
+          SourceSecurityGroupId: !GetAtt BastionSecurityGroup.GroupId
+        -
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment 
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+  PublicSubnetRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+  PublicRouteToInternet:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicSubnetRouteTable
+  BastionRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicSubnetRouteTable
+      SubnetId: !Ref BastionSubnet
+  AtaraxiaRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicSubnetRouteTable
+      SubnetId: !Ref AtaraxiaSubnet
+  BastionNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !Ref BastionSecurityGroup
+      SubnetId: !Ref BastionSubnet
+      PrivateIpAddress: 10.10.255.10
+  SiteNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !Ref AtaraxiaSecurityGroup
+      SubnetId: !Ref AtaraxiaSubnet
+      PrivateIpAddress: 10.10.0.10
+Outputs:
+  BastionNetworkInterfaceId:
+    Description: bastion server network interface
+    Value: !Ref BastionNetworkInterface
+    Export:
+      Name: AtaraxiaBastionNetworkInterfaceId
+  SiteNetworkInterfaceId:
+    Description: site server network interface
+    Value: !Ref SiteNetworkInterface
+    Export:
+      Name: AtaraxiaSiteNetworkInterfaceId

@@ -2,9 +2,10 @@ FROM openresty/openresty:alpine
 MAINTAINER 'Leland Later <lelandlater@gmail.com>'
 
 RUN apk add --no-cache curl ca-certificates wget
+RUN mkdir -p /data/letsencrypt /etc/letsencrypt /usr/local/openresty/nginx/static
 COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 RUN rm /etc/nginx/conf.d/default.conf
-COPY local.ataraxia.nginx.conf /etc/nginx/conf.d/
+COPY ssl.ataraxia.nginx.conf /etc/nginx/conf.d/
 COPY proxy_params /etc/nginx/proxy_params
 RUN rm -rf /usr/local/openresty/nginx/html/*
 COPY html/ /usr/local/openresty/nginx/html

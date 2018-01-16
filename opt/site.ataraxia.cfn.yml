@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ATARAXIA site server
+Resources:
+  BastionServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.nano
+      ImageId: ami-cd0f5cb6 # ubuntu 16.04 LTS ; hvm:ebs-ssd ; us-east-1
+      KeyName: 00-ataraxia
+      NetworkInterfaces:
+        -
+          NetworkInterfaceId: !ImportValue AtaraxiaBastionNetworkInterfaceId
+          DeviceIndex: '0'
+  SiteServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.small
+      ImageId: ami-cd0f5cb6 # ubuntu 16.04 LTS ; hvm:ebs-ssd ; us-east-1
+      KeyName: 01-ataraxia
+      NetworkInterfaces:
+        -
+          NetworkInterfaceId: !ImportValue AtaraxiaSiteNetworkInterfaceId
+          DeviceIndex: '0' 

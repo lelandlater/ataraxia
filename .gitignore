@@ -2,4 +2,4 @@
 !/.gitignore
 *.pyc
 *.pem
-opt/
+ssh.cfg
