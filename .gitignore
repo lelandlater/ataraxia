@@ -3,3 +3,4 @@
 *.pyc
 *.pem
 ssh.cfg
+src/site/app/

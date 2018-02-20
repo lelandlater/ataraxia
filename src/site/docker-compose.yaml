@@ -4,8 +4,6 @@ services:
     container_name: app_0
     restart: always
     build: app
-    links:
-      - postgres
     ports:
       - 8000
     environment:
@@ -14,40 +12,29 @@ services:
       - io.ataraxia.app
       - io.ataraxia.app.VERSION=0.1
       - io.ataraxia.app.launched_at=
-      - io.ataraxia.app.build_id={{ build_id }}
-  gui:
-    container_name: gui_0
-    restart: always
-    build: gui
-    links:
-      - app
-    ports:
-      - 5000:5000
-    volumes:
-      - static:/app/ataraxia/build/static/
-  postgres:
-    container_name: postgres_0
-    restart: always
-    build: ./postgres
-    ports:
-      - 5432:5432
-    environment:
-      - ATARAXIA_DB_USER=ataraxia
-      - ATARAXIA_DB_PASSWORD=this-is-a-password
-      - ATARAXIA_DB_DATABASE=ataraxiadb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=this-is-a-password
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    labels:
-      - io.ataraxia.postgres
-      - io.ataraxia.postgres.launched_at=
-      - io.ataraxia.postgres.build_id=
+      - io.ataraxia.app.build_id= #{{ build_id }}
+  #postgres:
+  #  container_name: postgres_0
+  #  restart: always
+  #  build: ./postgres
+  #  ports:
+  #    - 5432:5432
+  #  environment:
+  #    - ATARAXIA_DB_USER=ataraxia
+  #    - ATARAXIA_DB_PASSWORD=this-is-a-password
+  #    - ATARAXIA_DB_DATABASE=ataraxiadb
+  #    - POSTGRES_USER=postgres
+  #    - POSTGRES_PASSWORD=this-is-a-password
+  #  volumes:
+  #    - pgdata:/var/lib/postgresql/data
+  #  labels:
+  #    - io.ataraxia.postgres
+  #    - io.ataraxia.postgres.launched_at=
+  #    - io.ataraxia.postgres.build_id=
   openresty-local:
     container_name: openresty_local_0
     links:
       - app
-      - gui
     build:
       context: ./openresty
       dockerfile: Dockerfile-local
@@ -56,8 +43,6 @@ services:
       - 443:443
     environment:
       - JWT_SECRET=this-is-a-secret
-    volumes:
-      - static:/usr/local/openresty/nginx/static/
   #openresty-acq:
   #  container_name: openresty_acq_0
   #  build:
@@ -77,7 +62,6 @@ services:
   #  volumes:
   #    - certs:/etc/letsencrypt
   #    - certs_data:/data/letsencrypt
-  #  command: "certonly --webroot --webroot-path=/data/letsencrypt --renew-by-default -d ataraxia.io --email lelandlater@gmail.com --agree-tos --no-eff-email --non-interactive"
   #openresty-ssl:
   #  container_name: openresty_ssl_0
   #  build:
@@ -88,16 +72,15 @@ services:
   #    - 443:443
   #  environment:
   #    - JWT_SECRET="this-is-a-secret"
-  #   volumes:
-  #     - certs:/etc/letsencrypt
-  #     - certs_data:/data/letsencrypt
-  tests:
-    container_name: tests
-    build:
-      context: app
-      dockerfile: Dockerfile-tests
+  #  volumes:
+  #    - certs:/etc/letsencrypt
+  #    - certs_data:/data/letsencrypt
+  #tests:
+  #  container_name: tests
+  #  build:
+  #    context: app
+  #    dockerfile: Dockerfile-tests
 volumes:
-  static:
   certs:
     driver: local
     name: ssl_certs

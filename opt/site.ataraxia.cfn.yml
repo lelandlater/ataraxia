@@ -14,7 +14,7 @@ Resources:
   SiteServer:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t2.small
+      InstanceType: m3.medium
       ImageId: ami-cd0f5cb6 # ubuntu 16.04 LTS ; hvm:ebs-ssd ; us-east-1
       KeyName: 01-ataraxia
       NetworkInterfaces:

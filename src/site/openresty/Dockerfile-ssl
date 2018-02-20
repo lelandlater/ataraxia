@@ -10,4 +10,4 @@ COPY proxy_params /etc/nginx/proxy_params
 RUN rm -rf /usr/local/openresty/nginx/html/*
 COPY html/ /usr/local/openresty/nginx/html
 RUN curl -s https://api.github.com/repos/auth0/nginx-jwt/releases/latest | grep browser_download_url | cut -d '"' -f 4 | wget -qi -
-RUN tar xf nginx-jwt.tar.gz
+RUN tar -xf nginx-jwt.tar.gz

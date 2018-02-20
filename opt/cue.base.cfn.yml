@@ -1,0 +1,184 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cue base (integration into ATARAXIA cloud) 1/3 # base* # dev # prod
+Resources:
+  CueSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.10.1.0/24
+      VpcId: !ImportValue AtaraxiaVpcId
+      MapPublicIpOnLaunch: true
+  CueSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Description: allow ssh from bastion
+    Properties:
+      GroupDescription: allow ssh from bastion
+      GroupName: cue-sg
+      VpcId: !ImportValue AtaraxiaVpcId
+      SecurityGroupIngress:
+        -
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !ImportValue AtaraxiaBastionSecurityGroupId
+  HTTPSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: http-sg
+      GroupName: http-sg
+      VpcId: !Import AtaraxiaVpcId
+  CueLogsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: cuelogs-sg
+      GroupName: cuelogs-sg
+      VpcId: !ImportValue AtaraxiaVpcId
+  CueApiSecurityGroup:
+    Type: AWS::EC2::SecurityGroup        
+    Properties:
+      GroupDescription: connect to app servers
+      GroupName: cueapi-sg
+      VpcId: !ImportValue AtaraxiaVpcId
+  CueAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allow users
+      GroupName: cueapp-sg
+      VpcId: !ImportValue AtaraxiaVpcId      
+      SecurityGroupIngress:
+        -
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          FromPort: 10101
+          ToPort: 10101
+          SourceSecurityGroupId: !GetAtt CueApiSecurityGroup.GroupId
+      SecurityGroupEgress:
+        -
+          IpProtocol: tcp
+          ToPort: 80
+          FromPort: 80
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          ToPort: 443
+          FromPort: 443
+          CidrIp: 0.0.0.0/0
+        -
+          IpProtocol: tcp
+          ToPort: 5044
+          FromPort: 5044
+          DestinationSecurityGroupId: !GetAtt CueLogsSecurityGroup.GroupId
+        -
+          IpProtocol: tcp
+          ToPort: 10101
+          FromPort: 10101
+          DestinationSecurityGroupId: !GetAtt CueApiSecurityGroup.GroupId
+  CueRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !ImportValue AtaraxiaPublicSubnetRouteTableId
+      SubnetId: !Ref CueSubnet
+  DevCueAppNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !Ref CueSecurityGroup
+        -
+          !Ref CueAppSecurityGroup
+      SubnetId: !Ref CueSubnet
+      PrivateIpAddress: 10.10.1.110
+  DevCueApiNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !Ref CueSecurityGroup
+        -
+          !Ref CueApiSecurityGroup
+      SubnetId: !Ref CueSubnet
+      PrivateIpAddress: 10.10.1.111
+  ProdCueAppNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !Ref CueSecurityGroup
+        -
+          !Ref CueAppSecurityGroup
+      SubnetId: !Ref CueSubnet
+      PrivateIpAddress: 10.10.1.210
+  ProdCueApiNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !Ref CueSecurityGroup
+        -
+          !Ref CueApiSecurityGroup
+      SubnetId: !Ref CueSubnet
+      PrivateIpAddress: 10.10.1.211
+  CueLogsNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        -
+          !Ref CueSecurityGroup
+        -
+          !Ref CueLogsSecurityGroup
+      SubnetId: !Ref CueSubnet
+      PrivateIpAddress: 10.180.1.160
+Outputs:
+  CueSubnetId:
+    Description: cue subnet
+    Value: !Ref CueSubnet
+    Export:
+      Name: CueSubnetId
+  CueApiSecurityGroupId:
+    Description: api sg
+    Value: !GetAtt CueApiSecurityGroup.GroupId
+    Export:
+      Name: CueApiSecurityGroupId
+  CueAppSecurityGroupId:
+    Description: app sg
+    Value: !GetAtt CueAppSecurityGroup.GroupId
+    Export:
+      Name: CueAppSecurityGroupId
+  CueLogsSecurityGroupId:
+    Description: logs sg
+    Value: !Ref CueLogsSecurityGroup.GroupId
+    Export:
+      Name: CueLogsSecurityGroupId
+  DevCueAppNetworkInterface:
+    Description: dev cue app network interface
+    Value: !Ref DevCueAppNetworkInterface
+    Export:
+      Name: DevCueAppNetworkInterfaceId
+  DevCueApiNetworkInterface:
+    Description: dev cue api network interface
+    Value: !Ref DevCueApiNetworkInterface
+    Export:
+      Name: DevCueApiNetworkInterfaceId
+  ProdCueAppNetworkInterface:
+    Description: prod cue app network interface
+    Value: !Ref ProdCueAppNetworkInterface
+    Export:
+      Name: ProdCueAppNetworkInterfaceId
+  ProdCueApiNetworkInterface:
+    Description: prod cue api network interface
+    Value: !Ref ProdCueApiNetworkInterface
+    Export:
+      Name: ProdCueApiNetworkInterfaceId
+  CueLogsNetworkInterface:
+    Description: cue logs network interface
+    Value: !Ref CueLogsNetworkInterface
+    Export:
+      Name: CueLogsNetworkInterfaceId

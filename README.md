@@ -11,3 +11,7 @@
 Run production, testing and development servers in the AWS cloud for projects affiliated with ATARAXIA. ATARAXIA is Leland Later's collection of projects.
 
 ## using the cloud
+
+
+#### TODO
+    * UserData build in .txt: docker, docker-compose, rexray, code via scp (SSH configuration)

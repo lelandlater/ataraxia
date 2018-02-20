@@ -101,6 +101,11 @@ Resources:
       SubnetId: !Ref AtaraxiaSubnet
       PrivateIpAddress: 10.10.0.10
 Outputs:
+  VPCId:
+    Description: ATARAXIA VPC on AWS
+    Value: !Ref VPC
+    Export:
+      Name: AtaraxiaVpcId
   BastionNetworkInterfaceId:
     Description: bastion server network interface
     Value: !Ref BastionNetworkInterface
@@ -111,3 +116,13 @@ Outputs:
     Value: !Ref SiteNetworkInterface
     Export:
       Name: AtaraxiaSiteNetworkInterfaceId
+  BastionSecurityGroupId:
+    Description: bastion security group
+    Value: !GetAtt BastionSecurityGroup.GroupId
+    Export:
+      Name: AtaraxiaBastionSecurityGroupId
+  PublicSubnetRouteTableId:
+    Description: public subnet route table
+    Value: !Ref PublicSubnetRouteTable
+    Export:
+      Name: AtaraxiaPublicSubnetRouteTableId
