@@ -1,13 +1,7 @@
-# ATARAXIA web site
+# ataraxia
 
-#### Table of contents
+Personal projects. Cloud portal.
 
-1. [web site description](#web-site-description)
-2. [naming](#structure)
-3. [code structure](#code-structure)
-4. [setup](#setup)
-5. [usage](#usage)
-  * [development](#devlopment)
-  * [testing](#testing)
-  * [production](#production)
-6. [reference](#api-docs) 
+Hosted at [ataraxia.io](https://ataraxia.io)
+
+##### Last updated February 19, 2018
