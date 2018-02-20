@@ -1,17 +1,7 @@
-# ATARAXIA
+# ataraxia
 
-#### Table of contents
+Personal projects. Cloud portal.
 
-1. [description](#description)
-2. [using the cloud](#using-the-cloud)
-3. [license](#license)
+Hosted at [ataraxia.io](https://ataraxia.io)
 
-## description
-
-Run production, testing and development servers in the AWS cloud for projects affiliated with ATARAXIA. ATARAXIA is Leland Later's collection of projects.
-
-## using the cloud
-
-
-#### TODO
-    * UserData build in .txt: docker, docker-compose, rexray, code via scp (SSH configuration)
+##### Last updated February 19, 2018
